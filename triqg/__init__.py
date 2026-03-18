@@ -21,3 +21,5 @@ from .pulses import (
 )
 
 from .hamiltonian import build_hamiltonian
+
+from .decoherence import build_collapse_operators
