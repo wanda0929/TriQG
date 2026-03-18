@@ -27,3 +27,5 @@ from .decoherence import build_collapse_operators
 from .analysis import state_fidelity, extract_populations
 
 from .solver import simulate, SimulationResult
+
+from .visualization import plot_pulses, plot_populations, plot_populations_mc
