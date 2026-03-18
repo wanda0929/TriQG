@@ -25,3 +25,5 @@ from .hamiltonian import build_hamiltonian
 from .decoherence import build_collapse_operators
 
 from .analysis import state_fidelity, extract_populations
+
+from .solver import simulate, SimulationResult
