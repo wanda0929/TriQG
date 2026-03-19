@@ -18,6 +18,9 @@ from .pulses import (
     omega_p,
     omega_R,
     compute_pulse_area,
+    omega_cc,
+    omega_t1,
+    omega_t2,
 )
 
 from .hamiltonian import build_hamiltonian
