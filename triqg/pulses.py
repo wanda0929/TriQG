@@ -32,7 +32,7 @@ def omega_c(t: float, args: dict) -> float:
 
     if 0 <= t < T_c:
         return amp / 2
-    elif T_c + T_f <= t < 2 * T_c + T_f:
+    elif T_c + 2 * T_f <= t < 2 * T_c + 2 * T_f:
         return -amp / 2
     else:
         return 0.0
@@ -51,9 +51,9 @@ def omega_p(t: float, args: dict) -> float:
     T_f = args["T_f"]
     sigma = args["sigma"]
 
-    if T_c <= t < T_c + T_f:
-        center = T_c + T_f / 2
-        return (amp / 2) * np.exp(-((((t - center) ** 3) / sigma) ** 2))
+    if T_c <= t < T_c + 2 * T_f:
+        center = T_c + T_f 
+        return (amp) * np.exp(-((((t - center) ** 3) / sigma) ** 2))
     else:
         return 0.0
 
@@ -68,7 +68,7 @@ def omega_R(t: float, args: dict) -> float:
     T_f = args["T_f"]
     amp = args["omega_R_amp"]
 
-    if T_c <= t < T_c + T_f:
+    if 0 <= t < (T_c + T_f)*2:
         return amp / 2
     else:
         return 0.0
