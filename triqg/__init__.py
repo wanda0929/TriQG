@@ -23,7 +23,7 @@ from .pulses import (
     omega_t2,
 )
 
-from .hamiltonian import build_hamiltonian
+from .hamiltonian import build_hamiltonian, build_ccx_hamiltonian
 
 from .decoherence import build_collapse_operators
 

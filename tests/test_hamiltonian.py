@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import qutip
 
-from triqg.hamiltonian import build_hamiltonian
+from triqg.hamiltonian import build_hamiltonian, build_ccx_hamiltonian
 from triqg.atoms import CsAtom, RbAtom, DIMS, composite_basis_state
 
 
@@ -197,3 +197,144 @@ class TestDriveOperators:
         H = build_hamiltonian(DELTA, V_CT)
         for i in range(1, len(H)):
             assert callable(H[i][1]), f"Drive {i} coeff not callable"
+
+
+# ---------------------------------------------------------------------------
+# CCX gate Hamiltonian tests
+# ---------------------------------------------------------------------------
+
+
+class TestBuildCcxHamiltonianStructure:
+    def test_returns_list_with_four_elements(self):
+        """1 static + 3 drives = 4 elements."""
+        H = build_ccx_hamiltonian(V_CT)
+        assert isinstance(H, list)
+        assert len(H) == 4
+
+    def test_static_is_36x36_qobj(self):
+        H = build_ccx_hamiltonian(V_CT)
+        H_static = H[0]
+        assert isinstance(H_static, qutip.Qobj)
+        assert H_static.shape == (36, 36)
+
+
+class TestCcxStaticHamiltonian:
+    def test_rydberg_shift_control1_in_r_target_in_R(self):
+        """|r, 0, R> has energy V_ct."""
+        H = build_ccx_hamiltonian(V_CT)
+        psi = composite_basis_state(IDX_r, IDX_0, IDX_R)
+        energy = qutip.expect(H[0], psi)
+        assert energy == pytest.approx(V_CT)
+
+    def test_rydberg_shift_control2_in_r_target_in_R(self):
+        """|0, r, R> has energy V_ct."""
+        H = build_ccx_hamiltonian(V_CT)
+        psi = composite_basis_state(IDX_0, IDX_r, IDX_R)
+        energy = qutip.expect(H[0], psi)
+        assert energy == pytest.approx(V_CT)
+
+    def test_both_controls_in_r_target_in_R(self):
+        """|r, r, R> has energy 2 * V_ct."""
+        H = build_ccx_hamiltonian(V_CT)
+        psi = composite_basis_state(IDX_r, IDX_r, IDX_R)
+        energy = qutip.expect(H[0], psi)
+        assert energy == pytest.approx(2 * V_CT)
+
+    def test_no_detuning_on_P(self):
+        """|0, 0, P> has zero energy — no P-level detuning in CCX."""
+        H = build_ccx_hamiltonian(V_CT)
+        psi = composite_basis_state(IDX_0, IDX_0, IDX_P)
+        energy = qutip.expect(H[0], psi)
+        assert energy == pytest.approx(0.0)
+
+    def test_no_shift_when_target_not_in_R(self):
+        """|r, 0, A> has zero energy — no blockade without target in |R>."""
+        H = build_ccx_hamiltonian(V_CT)
+        psi = composite_basis_state(IDX_r, IDX_0, IDX_A)
+        energy = qutip.expect(H[0], psi)
+        assert energy == pytest.approx(0.0)
+
+    def test_static_is_hermitian(self):
+        H = build_ccx_hamiltonian(V_CT)
+        H_static = H[0]
+        assert (H_static - H_static.dag()).norm() < 1e-12
+
+
+class TestCcxDriveOperators:
+    """Verify each CCX drive operator couples exactly the correct transitions."""
+
+    def _matrix_element(self, op, bra_state, ket_state):
+        return complex(bra_state.dag() * op * ket_state)
+
+    def test_control_drive_couples_0_to_r(self):
+        """H_cc should couple |0,*,*> <-> |r,*,*> on control 1."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_cc = H[1][0]
+        bra = composite_basis_state(IDX_r, IDX_0, IDX_A)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_A)
+        assert abs(self._matrix_element(H_cc, bra, ket)) > 0.5
+
+    def test_control_drive_couples_0_to_r_on_control2(self):
+        """H_cc should also couple |*,0,*> <-> |*,r,*> on control 2."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_cc = H[1][0]
+        bra = composite_basis_state(IDX_0, IDX_r, IDX_A)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_A)
+        assert abs(self._matrix_element(H_cc, bra, ket)) > 0.5
+
+    def test_control_drive_does_not_couple_1_to_r(self):
+        """H_cc should NOT couple |1> <-> |r> on control 1."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_cc = H[1][0]
+        bra = composite_basis_state(IDX_r, IDX_0, IDX_A)
+        ket = composite_basis_state(IDX_1, IDX_0, IDX_A)
+        assert abs(self._matrix_element(H_cc, bra, ket)) < 1e-12
+
+    def test_target_drive1_couples_B_to_R(self):
+        """H_t1 should couple |*,*,B> <-> |*,*,R>."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_t1 = H[2][0]
+        bra = composite_basis_state(IDX_0, IDX_0, IDX_R)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_B)
+        assert abs(self._matrix_element(H_t1, bra, ket)) > 0.5
+
+    def test_target_drive1_does_not_couple_A_to_R(self):
+        """H_t1 should NOT couple |A> <-> |R>."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_t1 = H[2][0]
+        bra = composite_basis_state(IDX_0, IDX_0, IDX_R)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_A)
+        assert abs(self._matrix_element(H_t1, bra, ket)) < 1e-12
+
+    def test_target_drive2_couples_A_to_R(self):
+        """H_t2 should couple |*,*,A> <-> |*,*,R>."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_t2 = H[3][0]
+        bra = composite_basis_state(IDX_0, IDX_0, IDX_R)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_A)
+        assert abs(self._matrix_element(H_t2, bra, ket)) > 0.5
+
+    def test_target_drive2_does_not_couple_B_to_R(self):
+        """H_t2 should NOT couple |B> <-> |R>."""
+        H = build_ccx_hamiltonian(V_CT)
+        H_t2 = H[3][0]
+        bra = composite_basis_state(IDX_0, IDX_0, IDX_R)
+        ket = composite_basis_state(IDX_0, IDX_0, IDX_B)
+        assert abs(self._matrix_element(H_t2, bra, ket)) < 1e-12
+
+    def test_all_drive_operators_are_hermitian(self):
+        H = build_ccx_hamiltonian(V_CT)
+        for i in range(1, len(H)):
+            op = H[i][0]
+            assert (op - op.dag()).norm() < 1e-12, f"CCX drive {i} not Hermitian"
+
+    def test_all_operators_are_36x36(self):
+        H = build_ccx_hamiltonian(V_CT)
+        assert H[0].shape == (36, 36)
+        for i in range(1, len(H)):
+            assert H[i][0].shape == (36, 36), f"CCX drive {i} wrong shape"
+
+    def test_drive_coefficients_are_callable(self):
+        H = build_ccx_hamiltonian(V_CT)
+        for i in range(1, len(H)):
+            assert callable(H[i][1]), f"CCX drive {i} coeff not callable"
