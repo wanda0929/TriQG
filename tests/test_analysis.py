@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import qutip
 
-from triqg.analysis import state_fidelity, extract_populations
+from triqg.analysis import state_fidelity, extract_populations, average_gate_fidelity
 
 
 class TestStateFidelity:
@@ -75,3 +75,34 @@ class TestExtractPopulations:
 
         pops = extract_populations(FakeResult(), 1)
         assert pops.dtype == np.float64
+
+
+class TestAverageGateFidelity:
+    def test_all_perfect_pairs_returns_one(self):
+        """When every final state matches its target, average fidelity is 1.0."""
+        psi0 = qutip.basis(2, 0)
+        psi1 = qutip.basis(2, 1)
+        pairs = [(psi0, psi0), (psi1, psi1)]
+        assert average_gate_fidelity(pairs) == pytest.approx(1.0)
+
+    def test_mixed_fidelity_returns_correct_mean(self):
+        """One perfect pair (F=1) and one orthogonal pair (F=0) averages to 0.5."""
+        psi0 = qutip.basis(2, 0)
+        psi1 = qutip.basis(2, 1)
+        pairs = [(psi0, psi0), (psi0, psi1)]
+        assert average_gate_fidelity(pairs) == pytest.approx(0.5, abs=1e-10)
+
+    def test_works_with_density_matrices(self):
+        """Average fidelity accepts density matrix pairs."""
+        rho0 = qutip.ket2dm(qutip.basis(2, 0))
+        rho1 = qutip.ket2dm(qutip.basis(2, 1))
+        pairs = [(rho0, rho0), (rho1, rho1)]
+        assert average_gate_fidelity(pairs) == pytest.approx(1.0)
+
+    def test_single_pair(self):
+        """Works correctly with a single (final, expected) pair."""
+        psi0 = qutip.basis(2, 0)
+        psi_plus = (qutip.basis(2, 0) + qutip.basis(2, 1)).unit()
+        # F(|0>, |+>) = 0.5, so average over one pair is 0.5
+        pairs = [(psi0, psi_plus)]
+        assert average_gate_fidelity(pairs) == pytest.approx(0.5, abs=1e-10)

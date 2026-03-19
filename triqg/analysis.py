@@ -7,7 +7,7 @@ from QuTiP solver results.
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import qutip
@@ -38,6 +38,26 @@ def state_fidelity(final: qutip.Qobj, target: qutip.Qobj) -> float:
     rho_t = qutip.ket2dm(target) if target.isket else target
 
     return float(qutip.fidelity(rho_f, rho_t) ** 2)
+
+
+def average_gate_fidelity(
+    pairs: List[Tuple[qutip.Qobj, qutip.Qobj]],
+) -> float:
+    """
+    Compute the average state fidelity over a set of input/output pairs.
+
+    Parameters
+    ----------
+    pairs : list of (final_state, expected_state) tuples
+        Each element is a pair of ``qutip.Qobj`` (ket or density matrix).
+
+    Returns
+    -------
+    float
+        Arithmetic mean of the individual fidelities in [0, 1].
+    """
+    fidelities = [state_fidelity(final, expected) for final, expected in pairs]
+    return float(np.mean(fidelities))
 
 
 def extract_populations(result, num_levels: int) -> np.ndarray:
