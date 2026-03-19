@@ -34,20 +34,20 @@ from triqg.visualization import plot_pulses, plot_populations
 
 # Rabi frequencies [MHz, angular]
 omega_c_amp = 2 * np.pi * 50  # Control pulse amplitude
-omega_p_amp = 2 * np.pi * 50 * 1.039975  # Target probe pulse amplitude
+omega_p_amp = 2 * np.pi * 50 *1.039975   # Target probe pulse amplitude
 omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude
 
 # Detuning [MHz, angular]
-delta = 2 * np.pi * 1200
+delta = 2 * np.pi * 500
 
 # Rydberg blockade interaction strength [MHz, angular]
 # *** MODIFY THIS VALUE TO EXPLORE PARAMETER SPACE ***
-V_ct = 2 * np.pi * 200
+V_ct = 2 * np.pi * 500
 
 # Timing
 T_c = np.pi / omega_c_amp  # Duration of control pi-pulse
-T_f = 0.5  # Duration of target pulse window [us]
-sigma = 0.05  # Target pulse width parameter [us^3]
+T_f = 0.15  # Duration of target pulse window [us]
+sigma = 0.0014  # Target pulse width parameter [us^3]
 
 # Decay rates [MHz] (gamma = 1 / lifetime)
 gamma_r = 1.0 / 548.0  # Cs Rydberg |r>, lifetime 548 us
@@ -69,7 +69,7 @@ args = {
 # =====================================================================
 # Verify pulse area condition
 # =====================================================================
-area = compute_pulse_area(omega_p, delta, T_c, T_c + T_f, args)
+area = compute_pulse_area(omega_p, delta, T_c, T_c + 2 * T_f, args)
 print(f"Effective two-photon pulse area: {area:.4f} (target: pi = {np.pi:.4f})")
 
 # =====================================================================
@@ -98,7 +98,7 @@ psi_target = psi0  # |1, 1, A> -> |1, 1, A> (blockade active)
 # =====================================================================
 # Time list and expectation operators
 # =====================================================================
-t_total = 2 * T_c + T_f
+t_total = 2 * T_c + 2 * T_f
 tlist = np.linspace(0, t_total, 500)
 
 # Population projectors for the target atom levels
