@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from triqg.pulses import omega_c, omega_p, omega_R, compute_pulse_area
+from triqg.pulses import omega_cc, omega_t1, omega_t2
 
 
 # Shared test parameters
@@ -122,6 +123,116 @@ class TestComputePulseArea:
         assert area == pytest.approx(0.0)
 
 
+# ---------------------------------------------------------------------------
+# CCX gate pulse parameters
+# ---------------------------------------------------------------------------
+CCX_ARGS = {
+    "omega_cc_amp": 2 * np.pi * 100,  # 2pi * 100 MHz
+    "omega_t_amp": 2 * np.pi * 50,  # 2pi * 50 MHz
+    "T_cc": np.pi / (2 * np.pi * 100),  # pi / omega_cc_amp = 5 ns
+    "T_t": np.pi / (2 * np.pi * 50),  # pi / omega_t_amp = 10 ns
+}
+
+
+class TestOmegaCc:
+    def test_positive_segment(self):
+        """omega_cc returns +amp/2 in [0, T_cc)."""
+        amp = CCX_ARGS["omega_cc_amp"]
+        T_cc = CCX_ARGS["T_cc"]
+        t_mid = T_cc / 2
+        assert omega_cc(t_mid, CCX_ARGS) == pytest.approx(amp / 2)
+
+    def test_gap_is_zero(self):
+        """omega_cc returns 0 during the gap [T_cc, T_cc + 3*T_t)."""
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        # Sample at midpoint of gap
+        t_gap = T_cc + 1.5 * T_t
+        assert omega_cc(t_gap, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_negative_segment(self):
+        """omega_cc returns -amp/2 in [T_cc + 3*T_t, 2*T_cc + 3*T_t)."""
+        amp = CCX_ARGS["omega_cc_amp"]
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_neg = T_cc + 3 * T_t + T_cc / 2
+        assert omega_cc(t_neg, CCX_ARGS) == pytest.approx(-amp / 2)
+
+    def test_zero_before_start(self):
+        assert omega_cc(-0.1, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_after_end(self):
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_after = 2 * T_cc + 3 * T_t + 0.1
+        assert omega_cc(t_after, CCX_ARGS) == pytest.approx(0.0)
+
+
+class TestOmegaT1:
+    def test_first_subpulse(self):
+        """omega_t1 returns amp/2 in [T_cc, T_cc + T_t)."""
+        amp = CCX_ARGS["omega_t_amp"]
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_mid = T_cc + T_t / 2
+        assert omega_t1(t_mid, CCX_ARGS) == pytest.approx(amp / 2)
+
+    def test_third_subpulse(self):
+        """omega_t1 returns amp/2 in [T_cc + 2*T_t, T_cc + 3*T_t)."""
+        amp = CCX_ARGS["omega_t_amp"]
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_mid = T_cc + 2.5 * T_t
+        assert omega_t1(t_mid, CCX_ARGS) == pytest.approx(amp / 2)
+
+    def test_zero_in_second_subpulse_gap(self):
+        """omega_t1 returns 0 during the second sub-pulse window [T_cc + T_t, T_cc + 2*T_t)."""
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_gap = T_cc + 1.5 * T_t
+        assert omega_t1(t_gap, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_before_start(self):
+        assert omega_t1(0.0, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_after_end(self):
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        assert omega_t1(T_cc + 3 * T_t + 0.1, CCX_ARGS) == pytest.approx(0.0)
+
+
+class TestOmegaT2:
+    def test_second_subpulse(self):
+        """omega_t2 returns amp/2 in [T_cc + T_t, T_cc + 2*T_t)."""
+        amp = CCX_ARGS["omega_t_amp"]
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_mid = T_cc + 1.5 * T_t
+        assert omega_t2(t_mid, CCX_ARGS) == pytest.approx(amp / 2)
+
+    def test_zero_in_first_subpulse_window(self):
+        """omega_t2 returns 0 during the first sub-pulse window."""
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_mid = T_cc + T_t / 2
+        assert omega_t2(t_mid, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_in_third_subpulse_window(self):
+        """omega_t2 returns 0 during the third sub-pulse window."""
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        t_mid = T_cc + 2.5 * T_t
+        assert omega_t2(t_mid, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_before_start(self):
+        assert omega_t2(0.0, CCX_ARGS) == pytest.approx(0.0)
+
+    def test_zero_after_end(self):
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        assert omega_t2(T_cc + 2 * T_t + 0.1, CCX_ARGS) == pytest.approx(0.0)
+
+
 class TestQuTiPCompatibility:
     def test_omega_c_works_as_qobjevo_coefficient(self):
         """Pulse functions can be used as QuTiP [Qobj, func] coefficients."""
@@ -143,4 +254,35 @@ class TestQuTiPCompatibility:
         H = qutip.QobjEvo([H0, [H1, omega_p]], args=ARGS)
         center = ARGS["T_c"] + ARGS["T_f"] / 2
         result = H(center)
+        assert result.shape == (2, 2)
+
+    def test_omega_cc_works_as_qobjevo_coefficient(self):
+        import qutip
+
+        H0 = qutip.sigmaz()
+        H1 = qutip.sigmax()
+        H = qutip.QobjEvo([H0, [H1, omega_cc]], args=CCX_ARGS)
+        result = H(CCX_ARGS["T_cc"] / 2)
+        assert result.shape == (2, 2)
+
+    def test_omega_t1_works_as_qobjevo_coefficient(self):
+        import qutip
+
+        H0 = qutip.sigmaz()
+        H1 = qutip.sigmax()
+        H = qutip.QobjEvo([H0, [H1, omega_t1]], args=CCX_ARGS)
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        result = H(T_cc + T_t / 2)
+        assert result.shape == (2, 2)
+
+    def test_omega_t2_works_as_qobjevo_coefficient(self):
+        import qutip
+
+        H0 = qutip.sigmaz()
+        H1 = qutip.sigmax()
+        H = qutip.QobjEvo([H0, [H1, omega_t2]], args=CCX_ARGS)
+        T_cc = CCX_ARGS["T_cc"]
+        T_t = CCX_ARGS["T_t"]
+        result = H(T_cc + 1.5 * T_t)
         assert result.shape == (2, 2)

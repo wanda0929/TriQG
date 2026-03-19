@@ -5,7 +5,8 @@ All pulse functions have signature ``f(t, args) -> float``, compatible
 with QuTiP's ``[Qobj, func]`` time-dependent coefficient format.
 
 Expected keys in ``args``:
-    omega_c_amp, omega_p_amp, omega_R_amp, T_c, T_f, sigma
+    OR gate:  omega_c_amp, omega_p_amp, omega_R_amp, T_c, T_f, sigma
+    CCX gate: omega_cc_amp, omega_t_amp, T_cc, T_t
 """
 
 from __future__ import annotations
@@ -52,7 +53,7 @@ def omega_p(t: float, args: dict) -> float:
     sigma = args["sigma"]
 
     if T_c <= t < T_c + 2 * T_f:
-        center = T_c + T_f 
+        center = T_c + T_f
         return (amp) * np.exp(-((((t - center) ** 3) / sigma) ** 2))
     else:
         return 0.0
@@ -68,7 +69,68 @@ def omega_R(t: float, args: dict) -> float:
     T_f = args["T_f"]
     amp = args["omega_R_amp"]
 
-    if 0 <= t < (T_c + T_f)*2:
+    if 0 <= t < (T_c + T_f) * 2:
+        return amp / 2
+    else:
+        return 0.0
+
+
+def omega_cc(t: float, args: dict) -> float:
+    """
+    Piecewise square control pulse on |0> <-> |r> for the CCX gate.
+
+    Segments:
+        [0, T_cc)                          : +omega_cc_amp / 2
+        [T_cc, T_cc + 3*T_t)              : 0  (gap for target pulses)
+        [T_cc + 3*T_t, 2*T_cc + 3*T_t)   : -omega_cc_amp / 2
+        otherwise                          : 0
+    """
+    amp = args["omega_cc_amp"]
+    T_cc = args["T_cc"]
+    T_t = args["T_t"]
+
+    if 0 <= t < T_cc:
+        return amp / 2
+    elif T_cc + 3 * T_t <= t < 2 * T_cc + 3 * T_t:
+        return -amp / 2
+    else:
+        return 0.0
+
+
+def omega_t1(t: float, args: dict) -> float:
+    """
+    CCX target pulse driving |B> <-> |R> (sub-pulses 1 and 3).
+
+    Segments:
+        [T_cc, T_cc + T_t)              : omega_t_amp / 2  (sub-pulse 1)
+        [T_cc + 2*T_t, T_cc + 3*T_t)   : omega_t_amp / 2  (sub-pulse 3)
+        otherwise                        : 0
+    """
+    amp = args["omega_t_amp"]
+    T_cc = args["T_cc"]
+    T_t = args["T_t"]
+
+    if T_cc <= t < T_cc + T_t:
+        return amp / 2
+    elif T_cc + 2 * T_t <= t < T_cc + 3 * T_t:
+        return amp / 2
+    else:
+        return 0.0
+
+
+def omega_t2(t: float, args: dict) -> float:
+    """
+    CCX target pulse driving |A> <-> |R> (sub-pulse 2).
+
+    Segments:
+        [T_cc + T_t, T_cc + 2*T_t)  : omega_t_amp / 2
+        otherwise                     : 0
+    """
+    amp = args["omega_t_amp"]
+    T_cc = args["T_cc"]
+    T_t = args["T_t"]
+
+    if T_cc + T_t <= t < T_cc + 2 * T_t:
         return amp / 2
     else:
         return 0.0
