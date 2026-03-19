@@ -90,6 +90,7 @@ def simulate(
     c_ops: Optional[list] = None,
     e_ops: Optional[list] = None,
     options: Optional[dict] = None,
+    args: Optional[dict] = None,
     **kwargs,
 ) -> SimulationResult:
     """
@@ -111,6 +112,8 @@ def simulate(
         Expectation value operators.
     options : dict, optional
         Solver options forwarded to QuTiP.
+    args : dict, optional
+        Arguments forwarded to time-dependent coefficient functions.
     **kwargs
         Additional arguments. For mcsolve: ``ntraj``, ``seeds``,
         ``target_tol``, ``timeout``.
@@ -123,7 +126,9 @@ def simulate(
     e_ops = e_ops or []
 
     if method == "mesolve":
-        raw = qutip.mesolve(H, psi0, tlist, c_ops=c_ops, e_ops=e_ops, options=options)
+        raw = qutip.mesolve(
+            H, psi0, tlist, c_ops=c_ops, e_ops=e_ops, options=options, args=args
+        )
     elif method == "mcsolve":
         ntraj = kwargs.pop("ntraj", 100)
         raw = qutip.mcsolve(
@@ -134,6 +139,7 @@ def simulate(
             e_ops=e_ops,
             ntraj=ntraj,
             options=options,
+            args=args,
             **kwargs,
         )
     else:
