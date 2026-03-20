@@ -34,11 +34,11 @@ from triqg.visualization import plot_pulses, plot_populations
 
 # Rabi frequencies [MHz, angular]
 omega_c_amp = 2 * np.pi * 50  # Control pulse amplitude
-omega_p_amp = 2 * np.pi * 50 *1.039975   # Target probe pulse amplitude
+omega_p_amp = 2 * np.pi * 55    # Target probe pulse amplitude
 omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude
 
 # Detuning [MHz, angular]
-delta = 2 * np.pi * 500
+delta = 2 * np.pi * 1200
 
 # Rydberg blockade interaction strength [MHz, angular]
 # *** MODIFY THIS VALUE TO EXPLORE PARAMETER SPACE ***
@@ -46,7 +46,7 @@ V_ct = 2 * np.pi * 500
 
 # Timing
 T_c = np.pi / omega_c_amp  # Duration of control pi-pulse
-T_f = 0.15  # Duration of target pulse window [us]
+T_f = 0.2  # Duration of target pulse window [us]
 sigma = 0.0014  # Target pulse width parameter [us^3]
 
 # Decay rates [MHz] (gamma = 1 / lifetime)
@@ -84,8 +84,8 @@ c_ops = build_collapse_operators(gamma_r, gamma_R, gamma_P)
 cs = CsAtom()
 rb = RbAtom()
 psi0 = composite_basis_state(
-    cs.level_index["1"],
-    cs.level_index["1"],
+    cs.level_index["0"],
+    cs.level_index["0"],
     rb.level_index["A"],
 )
 

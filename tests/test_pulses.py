@@ -233,6 +233,72 @@ class TestOmegaT2:
         assert omega_t2(T_cc + 2 * T_t + 0.1, CCX_ARGS) == pytest.approx(0.0)
 
 
+class TestPulseAreaVsSigma:
+    """
+    Verify how compute_pulse_area of the probe pulse omega_p scales with sigma.
+
+    omega_p shape: amp * exp( -((t - center)^3 / sigma)^2 )
+
+    For delta/2pi = 1200 MHz, omega_p_amp/2pi = 50 MHz, T_f = 0.15 us:
+      - area increases monotonically with sigma
+      - area saturates at omega_p_amp^2 * 2*T_f / (2*delta) = 0.625*pi
+      - area CANNOT reach pi with these parameters
+    """
+
+    AREA_ARGS = {
+        "omega_c_amp": 2 * np.pi * 50,
+        "omega_p_amp": 2 * np.pi * 50,
+        "omega_R_amp": 0,
+        "T_c": np.pi / (2 * np.pi * 50),
+        "T_f": 0.15,
+        "sigma": 0.0014,  # placeholder, overridden per test
+    }
+    DELTA = 2 * np.pi * 1200
+
+    def _area(self, sigma):
+        a = {**self.AREA_ARGS, "sigma": sigma}
+        T_c = a["T_c"]
+        T_f = a["T_f"]
+        return compute_pulse_area(omega_p, self.DELTA, T_c, T_c + 2 * T_f, a)
+
+    def test_area_increases_with_sigma(self):
+        """Larger sigma -> wider pulse -> more area."""
+        sigmas = [0.0003, 0.0008, 0.0014, 0.003, 0.01]
+        areas = [self._area(s) for s in sigmas]
+        for i in range(len(areas) - 1):
+            assert areas[i] < areas[i + 1], (
+                f"area must increase: sigma={sigmas[i]} -> {sigmas[i + 1]}, "
+                f"area={areas[i]:.4f} -> {areas[i + 1]:.4f}"
+            )
+
+    def test_area_saturates_below_pi(self):
+        """With delta/2pi=1200 and omega_p_amp/2pi=50, area never reaches pi."""
+        area_large_sigma = self._area(0.5)
+        assert area_large_sigma < np.pi, (
+            f"area should be < pi, got {area_large_sigma / np.pi:.4f}*pi"
+        )
+
+    def test_saturation_value(self):
+        """Saturation equals the rectangular-pulse limit omega_p_amp^2 * 2*T_f / (2*delta)."""
+        amp = self.AREA_ARGS["omega_p_amp"]
+        T_f = self.AREA_ARGS["T_f"]
+        expected = amp**2 * (2 * T_f) / (2 * self.DELTA)
+
+        area_sat = self._area(1.0)  # effectively rectangular
+        assert area_sat == pytest.approx(expected, rel=1e-3)
+
+    def test_small_sigma_gives_small_area(self):
+        """A very narrow pulse (small sigma) yields area much less than saturation."""
+        area = self._area(1e-6)
+        area_sat = self._area(1.0)
+        assert area < 0.25 * area_sat
+
+    def test_current_sigma(self):
+        """Regression: sigma=0.0014 gives ~0.385*pi with these parameters."""
+        area = self._area(0.0014)
+        assert area == pytest.approx(0.385 * np.pi, rel=0.02)
+
+
 class TestQuTiPCompatibility:
     def test_omega_c_works_as_qobjevo_coefficient(self):
         """Pulse functions can be used as QuTiP [Qobj, func] coefficients."""
