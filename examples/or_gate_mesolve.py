@@ -34,7 +34,7 @@ from triqg.visualization import plot_pulses, plot_populations
 
 # Rabi frequencies [MHz, angular]
 omega_c_amp = 2 * np.pi * 50  # Control pulse amplitude
-omega_p_amp = 2 * np.pi * 55    # Target probe pulse amplitude
+omega_p_amp = 2 * np.pi * 50 * 1.00057    # Target probe pulse amplitude
 omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude
 
 # Detuning [MHz, angular]
@@ -46,8 +46,8 @@ V_ct = 2 * np.pi * 500
 
 # Timing
 T_c = np.pi / omega_c_amp  # Duration of control pi-pulse
-T_f = 0.2  # Duration of target pulse window [us]
-sigma = 0.0014  # Target pulse width parameter [us^3]
+T_f = 0.5  # Duration of target pulse window [us]
+sigma = 0.0244  # Target pulse width parameter [us^3]
 
 # Decay rates [MHz] (gamma = 1 / lifetime)
 gamma_r = 1.0 / 548.0  # Cs Rydberg |r>, lifetime 548 us
@@ -70,6 +70,8 @@ args = {
 # Verify pulse area condition
 # =====================================================================
 area = compute_pulse_area(omega_p, delta, T_c, T_c + 2 * T_f, args)
+print(f"Effective two-photon pulse area: {area:.4f} (target: pi = {np.pi:.4f})")
+area = compute_two_photon_pulse_area(omega_p, omega_R, delta, T_c, T_c + 2 * T_f, args)
 print(f"Effective two-photon pulse area: {area:.4f} (target: pi = {np.pi:.4f})")
 
 # =====================================================================

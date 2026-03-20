@@ -172,3 +172,46 @@ def compute_pulse_area(
 
     result, _ = integrate.quad(integrand, t_start, t_end)
     return result
+
+
+def compute_two_photon_pulse_area(
+    pulse_func_p: Callable,
+    pulse_func_R: Callable,
+    delta: float,
+    t_start: float,
+    t_end: float,
+    args: dict,
+) -> float:
+    """
+    Numerically integrate sqrt(2) * Omega_p(t) * Omega_R(t) / (2 * delta)
+    over [t_start, t_end].
+
+    This computes the effective two-photon Rabi angle for an off-resonant
+    Raman transition driven by two fields with detuning ``delta``.
+
+    Parameters
+    ----------
+    pulse_func_p : callable
+        Pulse function for Omega_p with signature ``f(t, args) -> float``.
+    pulse_func_R : callable
+        Pulse function for Omega_R with signature ``f(t, args) -> float``.
+    delta : float
+        Detuning (same units as pulse amplitudes).
+    t_start, t_end : float
+        Integration bounds.
+    args : dict
+        Arguments forwarded to both pulse functions.
+
+    Returns
+    -------
+    float
+        The integrated two-photon pulse area.
+    """
+
+    def integrand(t):
+        val_p = pulse_func_p(t, args)
+        val_R = pulse_func_R(t, args)
+        return np.sqrt(2) * val_p * val_R / (2 * delta)
+
+    result, _ = integrate.quad(integrand, t_start, t_end)
+    return result
