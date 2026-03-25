@@ -21,20 +21,21 @@ acquiring only a phase. Under blockade (any control in |r>), the |R>
 level is shifted by V_ct, breaking the two-photon resonance -- the
 target evolution is suppressed and it stays unchanged (no phase).
 
-In all cases the target's computational population is preserved; the
-gate acts as a controlled-phase operation on the computational basis.
+When both controls are |0>, the target completes the full cycle and
+remains unchanged. When at least one control is |1> (OR condition),
+the blockade prevents the return cycle and the target is flipped.
 
 Truth table (computational populations):
 
     Input       Ideal output
-    |0,0,A>  -> |0,0,A>   (unblocked: full Rabi cycle, phase acquired)
+    |0,0,A>  -> |0,0,A>   (both controls 0: target unchanged)
     |0,0,B>  -> |0,0,B>
-    |0,1,A>  -> |0,1,A>   (blocked: target evolution suppressed)
-    |0,1,B>  -> |0,1,B>
-    |1,0,A>  -> |1,0,A>   (blocked)
-    |1,0,B>  -> |1,0,B>
-    |1,1,A>  -> |1,1,A>   (blocked)
-    |1,1,B>  -> |1,1,B>
+    |0,1,A>  -> |0,1,B>   (one control in 1: target flips)
+    |0,1,B>  -> |0,1,A>
+    |1,0,A>  -> |1,0,B>   (one control in 1: target flips)
+    |1,0,B>  -> |1,0,A>
+    |1,1,A>  -> |1,1,B>   (both controls in 1: target flips)
+    |1,1,B>  -> |1,1,A>
 
 Outputs:
     Per-input state fidelities and the average gate fidelity F_bar.
@@ -53,15 +54,14 @@ from triqg.analysis import state_fidelity, average_gate_fidelity
 # Physical parameters (same as or_gate_mesolve.py)
 # =====================================================================
 omega_c_amp = 2 * np.pi * 50  # Control pulse Rabi frequency [MHz]
-omega_p_amp = 2 * np.pi * 50 * 1.039975  # Target probe pulse amplitude [MHz]
+omega_p_amp = 2 * np.pi * 70  # Target probe pulse amplitude [MHz]
 omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude [MHz]
 
-delta = 2 * np.pi * 500  # Detuning [MHz]
+delta = 2 * np.pi * 1200  # Detuning [MHz]
 V_ct = 2 * np.pi * 500  # Rydberg blockade strength [MHz]
 
 T_c = np.pi / omega_c_amp  # Control pi-pulse duration [us]
-T_f = 0.15  # Target pulse window [us]
-sigma = 0.0014  # Target pulse width [us^3]
+T_f = 0.32653  # Target pulse window [us]
 
 gamma_r = 1.0 / 548.0  # Cs |r> decay rate [MHz]
 gamma_R = 1.0 / 505.0  # Rb |R> decay rate [MHz]
@@ -73,7 +73,6 @@ args = {
     "omega_R_amp": omega_R_amp,
     "T_c": T_c,
     "T_f": T_f,
-    "sigma": sigma,
 }
 
 # =====================================================================
@@ -111,12 +110,14 @@ def or_gate_ideal_output(c1_bit: int, c2_bit: int, t_bit: int):
     """
     Return the ideal OR gate output state for given input bits.
 
-    The target computational population is preserved for ALL inputs.
-    Under the unblocked case (both controls |0>), the target undergoes
-    a full two-photon Rabi cycle and returns to its original state.
-    Under blockade (any control |1>), the target is unchanged.
+    When both controls are in state |0>, the target is unchanged.
+    When at least one control is in state |1> (OR condition), the
+    target is flipped (A <-> B).
     """
-    t_out = t_bit  # target unchanged for all inputs
+    if c1_bit or c2_bit:
+        t_out = 1 - t_bit  # target flips when OR condition is met
+    else:
+        t_out = t_bit  # target unchanged when both controls are 0
     return composite_basis_state(
         ctrl_levels[c1_bit], ctrl_levels[c2_bit], tgt_levels[t_out]
     )

@@ -13,8 +13,7 @@ ARGS = {
     "omega_p_amp": 2 * np.pi * 50,
     "omega_R_amp": 2.5 * 2 * np.pi * 50,
     "T_c": np.pi / (2 * np.pi * 50),  # pi / Omega_c
-    "T_f": 0.5,  # arbitrary for now
-    "sigma": 0.05,
+    "T_f": 0.32,  # Hanning T_f for area=pi at delta=2pi*1200
 }
 
 
@@ -35,11 +34,11 @@ class TestOmegaC:
         assert omega_c(t_gap, ARGS) == pytest.approx(0.0)
 
     def test_negative_segment(self):
-        """omega_c returns -amp/2 in [T_c + T_f, 2*T_c + T_f)."""
+        """omega_c returns -amp/2 in [T_c + 2*T_f, 2*T_c + 2*T_f)."""
         amp = ARGS["omega_c_amp"]
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
-        t_neg = T_c + T_f + T_c / 2
+        t_neg = T_c + 2 * T_f + T_c / 2
         assert omega_c(t_neg, ARGS) == pytest.approx(-amp / 2)
 
     def test_zero_before_start(self):
@@ -52,50 +51,75 @@ class TestOmegaC:
 
 
 class TestOmegaP:
+    """Tests for the Hanning (sin^2) probe pulse."""
+
     def test_zero_before_window(self):
         """omega_p returns 0 before T_c."""
         assert omega_p(0.0, ARGS) == pytest.approx(0.0)
 
     def test_zero_after_window(self):
-        """omega_p returns 0 after T_c + T_f."""
+        """omega_p returns 0 after T_c + 2*T_f."""
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
-        assert omega_p(T_c + T_f + 0.01, ARGS) == pytest.approx(0.0)
+        assert omega_p(T_c + 2 * T_f + 0.01, ARGS) == pytest.approx(0.0)
+
+    def test_zero_at_start_edge(self):
+        """Hanning starts exactly at 0."""
+        T_c = ARGS["T_c"]
+        assert omega_p(T_c, ARGS) == pytest.approx(0.0)
+
+    def test_zero_at_end_edge(self):
+        """Hanning ends exactly at 0."""
+        T_c = ARGS["T_c"]
+        T_f = ARGS["T_f"]
+        assert omega_p(T_c + 2 * T_f, ARGS) == pytest.approx(0.0)
 
     def test_peak_at_center(self):
-        """At center = T_c + T_f/2, the exponent is 0 so value = amp/2."""
+        """At center = T_c + T_f, sin^2(pi/2) = 1, so value = amp."""
         amp = ARGS["omega_p_amp"]
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
-        center = T_c + T_f / 2
-        assert omega_p(center, ARGS) == pytest.approx(amp / 2)
+        center = T_c + T_f
+        assert omega_p(center, ARGS) == pytest.approx(amp)
 
-    def test_symmetric_near_center(self):
-        """Pulse is NOT symmetric (cubic exponent), but |value| decreases away from center."""
+    def test_symmetric(self):
+        """Hanning pulse is symmetric about the center."""
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
-        center = T_c + T_f / 2
-        val_center = omega_p(center, ARGS)
-        val_offset = omega_p(center + 0.01, ARGS)
-        assert abs(val_offset) < abs(val_center)
+        center = T_c + T_f
+        dt = 0.05
+        val_left = omega_p(center - dt, ARGS)
+        val_right = omega_p(center + dt, ARGS)
+        assert val_left == pytest.approx(val_right)
+
+    def test_quarter_point(self):
+        """At t = T_c + T_f/2, sin^2(pi/4) = 0.5, so value = amp/2."""
+        amp = ARGS["omega_p_amp"]
+        T_c = ARGS["T_c"]
+        T_f = ARGS["T_f"]
+        t_quarter = T_c + T_f / 2
+        assert omega_p(t_quarter, ARGS) == pytest.approx(amp / 2)
 
 
 class TestOmegaR:
     def test_constant_inside_window(self):
-        """omega_R returns amp/2 during [T_c, T_c + T_f)."""
+        """omega_R returns amp/2 during [0, 2*(T_c + T_f))."""
         amp = ARGS["omega_R_amp"]
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
         t_mid = T_c + T_f / 2
         assert omega_R(t_mid, ARGS) == pytest.approx(amp / 2)
 
-    def test_zero_before_window(self):
-        assert omega_R(0.0, ARGS) == pytest.approx(0.0)
+    def test_nonzero_at_start(self):
+        """omega_R is on from t=0."""
+        amp = ARGS["omega_R_amp"]
+        assert omega_R(0.001, ARGS) == pytest.approx(amp / 2)
 
     def test_zero_after_window(self):
         T_c = ARGS["T_c"]
         T_f = ARGS["T_f"]
-        assert omega_R(T_c + T_f + 0.01, ARGS) == pytest.approx(0.0)
+        t_after = 2 * (T_c + T_f) + 0.01
+        assert omega_R(t_after, ARGS) == pytest.approx(0.0)
 
 
 class TestComputePulseArea:
@@ -233,70 +257,55 @@ class TestOmegaT2:
         assert omega_t2(T_cc + 2 * T_t + 0.1, CCX_ARGS) == pytest.approx(0.0)
 
 
-class TestPulseAreaVsSigma:
+class TestHanningPulseArea:
     """
-    Verify how compute_pulse_area of the probe pulse omega_p scales with sigma.
+    Verify compute_pulse_area of the Hanning (sin^2) probe pulse.
 
-    omega_p shape: amp * exp( -((t - center)^3 / sigma)^2 )
+    For the Hanning window, the analytical area is:
+        area = omega_p_amp^2 * 2*T_f * (3/8) / (2*delta)
 
-    For delta/2pi = 1200 MHz, omega_p_amp/2pi = 50 MHz, T_f = 0.15 us:
-      - area increases monotonically with sigma
-      - area saturates at omega_p_amp^2 * 2*T_f / (2*delta) = 0.625*pi
-      - area CANNOT reach pi with these parameters
+    With delta/2pi = 1200 MHz, omega_p_amp/2pi = 50 MHz, T_f = 0.32 us:
+        area = pi
     """
 
-    AREA_ARGS = {
-        "omega_c_amp": 2 * np.pi * 50,
-        "omega_p_amp": 2 * np.pi * 50,
-        "omega_R_amp": 0,
-        "T_c": np.pi / (2 * np.pi * 50),
-        "T_f": 0.15,
-        "sigma": 0.0014,  # placeholder, overridden per test
-    }
     DELTA = 2 * np.pi * 1200
 
-    def _area(self, sigma):
-        a = {**self.AREA_ARGS, "sigma": sigma}
+    def _area(self, T_f):
+        a = {
+            "omega_c_amp": 2 * np.pi * 50,
+            "omega_p_amp": 2 * np.pi * 50,
+            "omega_R_amp": 0,
+            "T_c": np.pi / (2 * np.pi * 50),
+            "T_f": T_f,
+        }
         T_c = a["T_c"]
-        T_f = a["T_f"]
         return compute_pulse_area(omega_p, self.DELTA, T_c, T_c + 2 * T_f, a)
 
-    def test_area_increases_with_sigma(self):
-        """Larger sigma -> wider pulse -> more area."""
-        sigmas = [0.0003, 0.0008, 0.0014, 0.003, 0.01]
-        areas = [self._area(s) for s in sigmas]
+    def test_area_increases_with_Tf(self):
+        """Larger T_f -> wider pulse -> more area."""
+        Tfs = [0.10, 0.20, 0.32, 0.50]
+        areas = [self._area(tf) for tf in Tfs]
         for i in range(len(areas) - 1):
-            assert areas[i] < areas[i + 1], (
-                f"area must increase: sigma={sigmas[i]} -> {sigmas[i + 1]}, "
-                f"area={areas[i]:.4f} -> {areas[i + 1]:.4f}"
-            )
+            assert areas[i] < areas[i + 1]
 
-    def test_area_saturates_below_pi(self):
-        """With delta/2pi=1200 and omega_p_amp/2pi=50, area never reaches pi."""
-        area_large_sigma = self._area(0.5)
-        assert area_large_sigma < np.pi, (
-            f"area should be < pi, got {area_large_sigma / np.pi:.4f}*pi"
-        )
+    def test_area_matches_analytical(self):
+        """Numerical area matches the analytical 3/8 formula."""
+        omega_p_amp = 2 * np.pi * 50
+        T_f = 0.32
+        expected = omega_p_amp**2 * (2 * T_f) * (3 / 8) / (2 * self.DELTA)
+        area = self._area(T_f)
+        assert area == pytest.approx(expected, rel=1e-4)
 
-    def test_saturation_value(self):
-        """Saturation equals the rectangular-pulse limit omega_p_amp^2 * 2*T_f / (2*delta)."""
-        amp = self.AREA_ARGS["omega_p_amp"]
-        T_f = self.AREA_ARGS["T_f"]
-        expected = amp**2 * (2 * T_f) / (2 * self.DELTA)
+    def test_area_equals_pi_at_design_Tf(self):
+        """T_f = 0.32 us gives area = pi with delta/2pi = 1200 MHz."""
+        area = self._area(0.32)
+        assert area == pytest.approx(np.pi, rel=0.01)
 
-        area_sat = self._area(1.0)  # effectively rectangular
-        assert area_sat == pytest.approx(expected, rel=1e-3)
-
-    def test_small_sigma_gives_small_area(self):
-        """A very narrow pulse (small sigma) yields area much less than saturation."""
-        area = self._area(1e-6)
-        area_sat = self._area(1.0)
-        assert area < 0.25 * area_sat
-
-    def test_current_sigma(self):
-        """Regression: sigma=0.0014 gives ~0.385*pi with these parameters."""
-        area = self._area(0.0014)
-        assert area == pytest.approx(0.385 * np.pi, rel=0.02)
+    def test_area_scales_linearly_with_Tf(self):
+        """Hanning area is proportional to T_f (since shape is self-similar)."""
+        a1 = self._area(0.20)
+        a2 = self._area(0.40)
+        assert a2 == pytest.approx(2 * a1, rel=1e-3)
 
 
 class TestQuTiPCompatibility:

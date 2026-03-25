@@ -11,7 +11,7 @@ Provides:
 
 from __future__ import annotations
 
-from typing import List
+from typing import Callable, List
 
 import qutip
 
@@ -30,7 +30,11 @@ def _transition_op(subsystem: int, i: int, j: int) -> qutip.Qobj:
     return qutip.tensor(ops)
 
 
-def build_hamiltonian(delta: float, V_ct: float) -> list:
+def build_hamiltonian(
+    delta: float,
+    V_ct: float,
+    pulse_p: Callable = omega_p,
+) -> list:
     """
     Build the time-dependent Hamiltonian for the OR gate.
 
@@ -41,13 +45,17 @@ def build_hamiltonian(delta: float, V_ct: float) -> list:
     V_ct : float
         Rydberg blockade interaction strength between each control
         and the target.
+    pulse_p : callable, optional
+        Pulse function for the target probe drive (|A>,|B> <-> |P>).
+        Must have signature ``f(t, args) -> float``.
+        Defaults to the Hanning (sin²) pulse ``omega_p``.
 
     Returns
     -------
     list
         QuTiP-compatible Hamiltonian:
         ``[H_static, [H_c1, omega_c], [H_c2, omega_c],
-           [H_p, omega_p], [H_R, omega_R]]``
+           [H_p, pulse_p], [H_R, omega_R]]``
     """
     cs = CsAtom()
     rb = RbAtom()
@@ -98,7 +106,7 @@ def build_hamiltonian(delta: float, V_ct: float) -> list:
         H_static,
         [H_drive_c1, omega_c],
         [H_drive_c2, omega_c],
-        [H_drive_p, omega_p],
+        [H_drive_p, pulse_p],
         [H_drive_R, omega_R],
     ]
 

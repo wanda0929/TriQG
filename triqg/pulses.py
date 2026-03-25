@@ -5,7 +5,7 @@ All pulse functions have signature ``f(t, args) -> float``, compatible
 with QuTiP's ``[Qobj, func]`` time-dependent coefficient format.
 
 Expected keys in ``args``:
-    OR gate:  omega_c_amp, omega_p_amp, omega_R_amp, T_c, T_f, sigma
+    OR gate:  omega_c_amp, omega_p_amp, omega_R_amp, T_c, T_f
     CCX gate: omega_cc_amp, omega_t_amp, T_cc, T_t
 """
 
@@ -41,20 +41,20 @@ def omega_c(t: float, args: dict) -> float:
 
 def omega_p(t: float, args: dict) -> float:
     """
-    Cubic super-Gaussian target pulse on |A>,|B> <-> |P>.
+    Hanning (sin²) target pulse on |A>,|B> <-> |P>.
 
-    Active during [T_c, T_c + T_f).
-    Shape: (omega_p_amp / 2) * exp(-((t - center)^3 / sigma)^2)
-    where center = T_c + T_f / 2.
+    Active during [T_c, T_c + 2*T_f].
+    Shape: omega_p_amp * sin²(pi * (t - T_c) / (2 * T_f))
+
+    Starts and ends exactly at zero, symmetric, smooth.
+    Area efficiency: 3/8 of the rectangular-pulse area.
     """
     amp = args["omega_p_amp"]
     T_c = args["T_c"]
     T_f = args["T_f"]
-    sigma = args["sigma"]
 
-    if T_c <= t < T_c + 2 * T_f:
-        center = T_c + T_f
-        return (amp) * np.exp(-((((t - center) ** 3) / sigma) ** 2))
+    if T_c <= t <= T_c + 2 * T_f and T_f > 0:
+        return (amp / 2) * np.sin(np.pi * (t - T_c) / (2 * T_f)) ** 2
     else:
         return 0.0
 
@@ -71,6 +71,35 @@ def omega_R(t: float, args: dict) -> float:
 
     if 0 <= t < (T_c + T_f) * 2:
         return amp / 2
+    else:
+        return 0.0
+
+
+def omega_gaussian(t: float, args: dict) -> float:
+    """
+    Gaussian target pulse on |A>,|B> <-> |P> with super-Gaussian profile.
+
+    Active during [T_c, T_c + 2*T_f].
+    Shape: omega_p_amp * exp(-((t - T_c - T_f)^3 / sigma)^2) / 2
+
+    This is a super-Gaussian of order 6, centered at T_c + T_f.
+    The cubic term in the exponent creates a flatter top than a standard Gaussian.
+
+    Expected keys in args:
+        omega_p_amp : amplitude coefficient
+        T_c         : start time of control pulse
+        T_f         : half-width of the target pulse
+        sigma       : width parameter controlling the pulse shape
+    """
+    amp = args["omega_p_amp"]
+    T_c = args["T_c"]
+    T_f = args["T_f"]
+    sigma = args["sigma"]
+
+    if T_c <= t < T_c + 2 * T_f and T_f > 0:
+        t_center = T_c + T_f
+        exponent = -((t - t_center) ** 3 / sigma) ** 2
+        return (amp /2) * np.exp(exponent)
     else:
         return 0.0
 

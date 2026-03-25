@@ -1,0 +1,255 @@
+% ==========================================================================
+% References for: CNOT gate pulse design in Rydberg atom systems
+% Seed paper: Farouk et al. 2023 (Photonics 10, 1280)
+% Captured keywords: STRAP, two-photon resonance, counter-diabatic driving
+% Generated: 2026-03-20
+% ==========================================================================
+
+% --- SEED PAPER ---
+
+@article{farouk2023,
+  title   = {Parallel Implementation of {CNOT}$^N$ and {C}$_2${NOT}$^2$ Gates
+             via Homonuclear and Heteronuclear {F\"orster} Interactions of
+             {Rydberg} Atoms},
+  author  = {Farouk, Ahmed M. and Beterov, Ilya I. and Xu, Peng and
+             Bergamini, Silvia and Ryabtsev, Igor I.},
+  journal = {Photonics},
+  volume  = {10},
+  number  = {11},
+  pages   = {1280},
+  year    = {2023},
+  doi     = {10.3390/photonics10111280},
+  url     = {https://arxiv.org/abs/2206.12176},
+  note    = {Seed paper. PDF saved as
+             M. Farouk et al. - 2023 - Parallel Implementation of CNOTN
+             and C2NOT2 Gates .pdf.
+             Level structure: Cs control (6S$_{1/2}$ $\to$ 7P $\to$ 81S$_{1/2}$),
+             Rb target (5S$_{1/2}$ $\to$ 6P$_{3/2}$ $\to$ 77S$_{1/2}$).
+             EIT-based CNOT via Rydberg blockade with heteronuclear
+             F\"orster resonance.}
+}
+
+% --- EIT-BASED CNOT GATE (direct experimental verification of seed protocol) ---
+
+@article{mcdonnell2022,
+  title   = {Demonstration of a Quantum Gate using Electromagnetically
+             Induced Transparency},
+  author  = {McDonnell, K. and Keary, L. F. and Pritchard, J. D.},
+  journal = {Physical Review Letters},
+  volume  = {129},
+  pages   = {200501},
+  year    = {2022},
+  doi     = {10.1103/PhysRevLett.129.200501},
+  url     = {https://arxiv.org/abs/2204.03733},
+  note    = {PDF saved as mcdonnell-2022-eit-cnot-gate.pdf.
+             First experimental EIT-based native CNOT gate with Cs atoms.
+             Same gate protocol as seed paper. $^{133}$Cs atoms separated
+             by 6 $\mu$m. Loss-corrected fidelity $F_{\mathrm{CNOT}}
+             \approx 0.82$.}
+}
+
+% --- NATIVE CNOT WITH TWO-PHOTON EXCITATION & PULSE OPTIMIZATION ---
+
+@article{li2023,
+  title   = {Proposal for practical {Rydberg} quantum gates using a native
+             two-photon excitation},
+  author  = {Li, Rui and Qian, Jing and Zhang, Weiping},
+  journal = {arXiv preprint arXiv:2303.16605},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2303.16605},
+  note    = {PDF saved as li-2023-native-cnot-two-photon.pdf.
+             Keywords: two-photon resonance, pulse optimization.
+             Native CNOT gate via optimized smooth Gaussian-shaped pulses.
+             Two-photon Rydberg excitation through intermediate P state.
+             Referenced as [59] in seed paper.}
+}
+
+% --- SYMMETRIC CZ GATES WITH ADIABATIC PULSES (Cs, two-photon) ---
+
+@article{saffman2020,
+  title   = {Symmetric {Rydberg} controlled-{Z} gates with adiabatic pulses},
+  author  = {Saffman, M. and Beterov, I. I. and Dalal, A. and
+             P{\'a}ez, E. J. and Sanders, B. C.},
+  journal = {Physical Review A},
+  volume  = {101},
+  pages   = {062309},
+  year    = {2020},
+  doi     = {10.1103/PhysRevA.101.062309},
+  url     = {https://arxiv.org/abs/1912.02977},
+  note    = {PDF saved as saffman-2019-symmetric-cz-adiabatic.pdf.
+             Keywords: two-photon resonance, adiabatic rapid passage.
+             Cs atom parameters with two-photon excitation.
+             Bell state fidelity $F > 0.999$ with ARP pulses.
+             Globally optimized pulse shapes give $F = 0.997$.}
+}
+
+% --- MULTIQUBIT RYDBERG GATES VIA TWO-PHOTON ARP ---
+
+@article{pelegri2022,
+  title   = {High-fidelity multiqubit {Rydberg} gates via two-photon
+             adiabatic rapid passage},
+  author  = {Pelegr{\'\i}, Gerard and Daley, Andrew J. and
+             Pritchard, Jonathan D.},
+  journal = {Physical Review A},
+  volume  = {106},
+  pages   = {042616},
+  year    = {2022},
+  doi     = {10.1103/PhysRevA.106.042616},
+  url     = {https://arxiv.org/abs/2112.13025},
+  note    = {PDF saved as pelegri-2021-multiqubit-two-photon-arp.pdf.
+             Keywords: two-photon resonance, adiabatic rapid passage.
+             Cs atoms, two-photon excitation via short-lived intermediate state.
+             Accounts for spontaneous decay and AC Stark shifts from full
+             hyperfine manifold. CCZ fidelity $> 0.995$ in $\sim 1.8\;\mu$s.}
+}
+
+% --- SINGLE TEMPORAL PULSE CZ VIA TWO-PHOTON (6P in Rb) ---
+
+@article{li2022,
+  title   = {Single temporal-pulse-modulated parameterized controlled-phase
+             gate for {Rydberg} atoms},
+  author  = {Li, X. X. and Shao, X. Q. and Li, Weibin},
+  journal = {Physical Review Applied},
+  volume  = {18},
+  pages   = {044042},
+  year    = {2022},
+  doi     = {10.1103/PhysRevApplied.18.044042},
+  url     = {https://arxiv.org/abs/2201.05994},
+  note    = {PDF saved as li-2022-single-pulse-cz-two-photon.pdf.
+             Keywords: two-photon resonance.
+             Symmetrical two-photon excitation via 6P (second resonance line)
+             in $^{87}$Rb --- same intermediate state as seed paper targets.
+             CZ$_\theta$ fidelity $> 99.7\%$ in $< 1\;\mu$s.}
+}
+
+% --- COUNTER-DIABATIC DRIVING FOR SYMMETRIC CZ GATE ---
+
+@article{beterov2025,
+  title   = {Symmetric {$C_Z$} gate for ultracold neutral atoms based on
+             counterdiabatic driving at {Rydberg} excitation},
+  author  = {Beterov, I. I. and Kozenko, K. V. and Xu, Peng and
+             Ryabtsev, I. I.},
+  journal = {arXiv preprint arXiv:2510.04766},
+  year    = {2025},
+  url     = {https://arxiv.org/abs/2510.04766},
+  note    = {PDF saved as beterov-2025-counterdiabatic-cz.pdf.
+             Keywords: counter-diabatic driving.
+             Double adiabatic pulse sequence with counter-diabatic correction
+             applied symmetrically to both atoms. Bridges adiabatic and
+             time-optimal gate schemes. Same group as seed paper.}
+}
+
+% --- SHORTCUT-TO-ADIABATIC CONTROLLED-PHASE GATE ---
+
+@article{yaguebosch2024,
+  title   = {Shortcut-to-Adiabatic Controlled-Phase Gate in {Rydberg} Atoms},
+  author  = {Yag{\"u}e Bosch, Luis S. and Ehret, Tim and Petiziol, Francesco
+             and Arimondo, Ennio and Wimberger, Sandro},
+  journal = {Physical Review Letters},
+  volume  = {132},
+  pages   = {100602},
+  year    = {2024},
+  doi     = {10.1103/PhysRevLett.132.100602},
+  url     = {https://arxiv.org/abs/2312.11594},
+  note    = {PDF saved as yaguebosch-2023-shortcut-adiabatic-cphase.pdf.
+             Keywords: counter-diabatic driving, shortcuts to adiabaticity.
+             Compensates nonadiabatic transitions via oscillating fields
+             that mimic a counterdiabatic Hamiltonian.
+             High fidelity in wide parameter regions.}
+}
+
+% --- STARK-TUNED FORSTER RESONANCE ADIABATIC PASSAGE (STRAP concept) ---
+
+@article{beterov2018,
+  title   = {Two-qubit gates using adiabatic passage of the {Stark}-tuned
+             {F\"orster} resonances in {Rydberg} atoms},
+  author  = {Beterov, I. I. and Saffman, M. and Yakshina, E. A. and
+             Tretyakov, D. B. and Entin, V. M. and Bergamini, S. and
+             Kuznetsova, E. A. and Ryabtsev, I. I.},
+  journal = {Physical Review A},
+  volume  = {97},
+  pages   = {032701},
+  year    = {2018},
+  doi     = {10.1103/PhysRevA.97.032701},
+  url     = {https://arxiv.org/abs/1606.08198},
+  note    = {PDF saved as beterov-2016-stark-tuned-forster-adiabatic.pdf.
+             Keywords: STRAP (Stark-Tuned Resonance Adiabatic Passage concept).
+             CZ and CNOT gates via deterministic phase accumulation during
+             double adiabatic passage of Stark-tuned F\"orster resonance.
+             Cs atoms: $90S + 96S \to 90P + 95P$.
+             Foundation for the heteronuclear F\"orster approach in seed paper.}
+}
+
+% --- TIME-OPTIMAL RYDBERG GATES ---
+
+@article{jandura2022,
+  title   = {Time-Optimal Two- and Three-Qubit Gates for {Rydberg} Atoms},
+  author  = {Jandura, Sven and Pupillo, Guido},
+  journal = {Quantum},
+  volume  = {6},
+  pages   = {712},
+  year    = {2022},
+  doi     = {10.22331/q-2022-05-13-712},
+  url     = {https://arxiv.org/abs/2202.00903},
+  note    = {PDF saved as jandura-2022-time-optimal-rydberg.pdf.
+             Semi-analytical optimal control with smooth ans\"atze.
+             Global laser pulses (no single-site addressing needed).
+             CZ gate reaches fundamental $T_{\min}$ set by blockade
+             strength. Benchmark for counter-diabatic and adiabatic methods.}
+}
+
+% --- HIGH-FIDELITY PARALLEL ENTANGLING GATES (Harvard/QuEra) ---
+
+@article{evered2023,
+  title   = {High-fidelity parallel entangling gates on a neutral-atom
+             quantum computer},
+  author  = {Evered, Simon J. and Bluvstein, Dolev and Kalinowski, Marcin
+             and Ebadi, Sepehr and Manovitz, Tom and Zhou, Hengyun and
+             Li, Sophie H. and Geim, Alexandra A. and Wang, Tout T. and
+             Maskara, Nishad and others},
+  journal = {Nature},
+  volume  = {622},
+  pages   = {268--272},
+  year    = {2023},
+  doi     = {10.1038/s41586-023-06481-y},
+  url     = {https://arxiv.org/abs/2304.05420},
+  note    = {PDF saved as evered-2023-high-fidelity-parallel-gates.pdf.
+             State-of-the-art 99.5\% two-qubit gate fidelity on up to 60
+             atoms in parallel. Optimal control single-pulse gates, atomic
+             dark states to reduce scattering. Surpasses surface-code
+             threshold.}
+}
+
+% --- TRANSITIONLESS QUANTUM DRIVING CZ GATE ---
+
+@article{dalal2022,
+  title   = {Two-qubit gate in neutral atoms using transitionless quantum
+             driving},
+  author  = {Dalal, Archismita and Sanders, Barry C.},
+  journal = {arXiv preprint arXiv:2206.08915},
+  year    = {2022},
+  url     = {https://arxiv.org/abs/2206.08915},
+  note    = {PDF saved as dalal-2022-transitionless-cz-rydberg.pdf.
+             Keywords: counter-diabatic driving (transitionless quantum driving).
+             Simultaneous broadband laser driving of atom pair.
+             Closely related to counter-diabatic / shortcut-to-adiabaticity
+             family of protocols.}
+}
+
+% --- TRANSITION SLOW-DOWN FAST CNOT ---
+
+@article{shi2022,
+  title   = {Transition Slow-Down by {Rydberg} Interaction of Neutral Atoms
+             and a Fast Controlled-{NOT} Quantum Gate},
+  author  = {Shi, Xiao-Feng},
+  journal = {Physical Review Applied},
+  volume  = {18},
+  pages   = {034072},
+  year    = {2022},
+  doi     = {10.1103/PhysRevApplied.18.034072},
+  url     = {https://arxiv.org/abs/2102.00342},
+  note    = {PDF saved as shi-2021-transition-slowdown-cnot.pdf.
+             Fast CNOT gate via transition slow-down effect of Rydberg
+             blockade. Alternative to EIT-based CNOT of seed paper.
+             Explores beyond excitation-annihilation effect.}
+}

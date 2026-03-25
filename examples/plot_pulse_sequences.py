@@ -22,7 +22,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
-from triqg.pulses import omega_c, omega_p, omega_R, omega_cc, omega_t1, omega_t2
+from triqg.pulses import omega_c, omega_p, omega_R, omega_gaussian, omega_cc, omega_t1, omega_t2
 
 # =====================================================================
 # Publication style -- scaled for 4:3 figures
@@ -50,14 +50,15 @@ BREAK_LW = 1.2  # broken-axis slash thickness
 
 
 # =====================================================================
-# OR Gate Parameters
+# OR Gate Parameters (Gaussian pulse)
 # =====================================================================
-omega_c_amp = 2 * np.pi * 50  # Control pulse amplitude [MHz, angular]
-omega_p_amp = 2 * np.pi * 70  # Target probe pulse amplitude
-omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude
+omega_c_amp = 2 * np.pi * 50           # Control pulse amplitude [MHz, angular]
+omega_p_amp = 2 * np.pi * 50.0 * 1.039975  # Target probe pulse amplitude
+omega_R_amp = 3.5 * omega_p_amp        # Target Rydberg coupling amplitude
 
 T_c = np.pi / omega_c_amp  # Control pi-pulse duration: ~0.01 us (10 ns)
-T_f = 0.32653  # Target pulse half-window [us]
+T_f = 0.15                  # Target pulse half-window [us]
+sigma = 0.0014              # Super-Gaussian width parameter [us]
 
 or_args = {
     "omega_c_amp": omega_c_amp,
@@ -65,13 +66,14 @@ or_args = {
     "omega_R_amp": omega_R_amp,
     "T_c": T_c,
     "T_f": T_f,
+    "sigma": sigma,
 }
 
 t_total_or = 2 * T_c + 2 * T_f
 
 print("OR gate timings:")
 print(f"  T_c      = {T_c * 1e3:.2f} ns  (control pi-pulse)")
-print(f"  2*T_f    = {2 * T_f * 1e3:.2f} ns  (Hanning probe window)")
+print(f"  2*T_f    = {2 * T_f * 1e3:.2f} ns  (Gaussian probe window)")
 print(f"  t_total  = {t_total_or * 1e3:.2f} ns")
 print(f"  Ratio    = 2*T_f / T_c = {2 * T_f / T_c:.1f}x\n")
 
@@ -141,9 +143,9 @@ t_full = np.linspace(0, t_total_or, N_full)
 t_ns = t_full * 1e3  # nanoseconds for plotting
 
 or_pulses = [
-    (omega_c * 2, COLOR_CTRL, r"$\Omega_c$ (control)"),
-    (omega_p * 2, COLOR_PROBE, r"$\Omega_p$ (probe)"),
-    (omega_R * 2, COLOR_COUPLE, r"$\Omega_R$ (coupling)"),
+    (lambda t, a: 2 * omega_c(t, a),        COLOR_CTRL,   r"$\Omega_c$ (control)"),
+    (lambda t, a: 2 * omega_gaussian(t, a),  COLOR_PROBE,  r"$\Omega_\mathrm{g}$ (probe)"),
+    (lambda t, a: 2 * omega_R(t, a),         COLOR_COUPLE, r"$\Omega_R$ (coupling)"),
 ]
 
 # Pre-evaluate all pulses (in MHz, divided by 2pi), then mask zeros
@@ -178,8 +180,8 @@ for ax, xlim in [(ax_L, xlim_L), (ax_M, xlim_M), (ax_R, xlim_R)]:
         ax.plot(t_ns, or_vals[label], color=color, linewidth=LW, label=label, zorder=3)
     ax.set_xlim(xlim)
 
-# -- Tighten y-axis around data: pulses range from -25 to 87.5 MHz --
-ax_L.set_ylim(-35, 100)
+# -- Tighten y-axis around data: pulses range from -50 to ~182 MHz --
+ax_L.set_ylim(-65, 200)
 
 # -- Move x-axis (bottom spine) to y=0 on all panels --
 for ax in (ax_L, ax_M, ax_R):
@@ -228,7 +230,7 @@ ax_R.plot((-d, +d), (y0_frac - d, y0_frac + d), transform=ax_R.transAxes, **bk)
 
 # -- Title --
 fig1.suptitle(
-    "OR Gate Pulse Sequence",
+    "OR Gate Pulse Sequence (Gaussian)",
     fontweight="bold",
     fontsize=14,
     y=0.95,
@@ -262,13 +264,9 @@ tlist_ccx = np.linspace(0, t_total_ccx, 1000)
 fig2, ax2 = plt.subplots(figsize=(7, 5.25), constrained_layout=False)
 
 ccx_pulses = [
-    (omega_cc * 2, r"$\Omega_{cc}$ (control)", COLOR_CTRL),
-    (omega_t1 * 2, r"$\Omega_{t1}$ ($|B\rangle\!\leftrightarrow\!|R\rangle$)", COLOR_PROBE),
-    (
-        omega_t2 * 2,
-        r"$\Omega_{t2}$ ($|A\rangle\!\leftrightarrow\!|R\rangle$)",
-        COLOR_COUPLE,
-    ),
+    (lambda t, a: 2 * omega_cc(t, a), r"$\Omega_{cc}$ (control)", COLOR_CTRL),
+    (lambda t, a: 2 * omega_t1(t, a), r"$\Omega_{t1}$ ($|B\rangle\!\leftrightarrow\!|R\rangle$)", COLOR_PROBE),
+    (lambda t, a: 2 * omega_t2(t, a), r"$\Omega_{t2}$ ($|A\rangle\!\leftrightarrow\!|R\rangle$)", COLOR_COUPLE),
 ]
 
 for func, label, color in ccx_pulses:
@@ -285,8 +283,8 @@ for func, label, color in ccx_pulses:
 ax2.set_ylabel(r"Amplitude / 2$\pi$ (MHz)", fontsize=13)
 ax2.set_xlim(0, t_total_ccx * 1e3)
 
-# Tighten y-axis: pulses range from -50 to +50 MHz
-ax2.set_ylim(-60, 60)
+# Tighten y-axis: pulses range from -100 to +100 MHz
+ax2.set_ylim(-120, 120)
 
 # Move x-axis to y=0
 ax2.spines["bottom"].set_position(("data", 0))
