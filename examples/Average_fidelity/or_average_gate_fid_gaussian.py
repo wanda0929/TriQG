@@ -55,20 +55,28 @@ from triqg.analysis import state_fidelity, average_gate_fidelity
 # =====================================================================
 # Physical parameters (from or_gate_mesolve_gaussian.py)
 # =====================================================================
-omega_c_amp = 2 * np.pi * 50  # Control pulse Rabi frequency [MHz]
-omega_p_amp = 2 * np.pi * 50.0 * 1.039975  # Target probe pulse amplitude [MHz]
-omega_R_amp = 3.5 * omega_p_amp  # Target Rydberg coupling amplitude [MHz]
+# Pulse and interaction parameters from the SelfCorrectingRydberg paper
+# (main.tex, Sec. III.A "Three-qubit OR gate (EIT + Rydberg blockade)").
+omega_c_amp = 2 * np.pi * 50  # Cs control Rabi frequency Omega_c [MHz]
+# Paper value: Omega_p = 2 pi * 50 MHz. The extra factor 1.039975 is a
+# numerical calibration so the super-Gaussian (order 6) target envelope
+# satisfies the two-photon area constraint int Omega_p^2 / (2 delta) dt = pi.
+omega_p_amp = 2 * np.pi * 50.0 * 1.039975  # Rb target probe amplitude [MHz]
+omega_R_amp = 3.5 * omega_p_amp  # Omega_R = 3.5 * Omega_p (paper)
 
-delta = 2 * np.pi * 500  # Detuning [MHz]
-V_ct = 2 * np.pi * 5000  # Rydberg blockade strength [MHz]
+delta = 2 * np.pi * 500  # Two-photon detuning Delta [MHz]
+V_ct = 2 * np.pi * 593  # Rb-Cs Rydberg blockade V_ct [MHz] (Table I)
 
-T_c = np.pi / omega_c_amp  # Control pi-pulse duration [us]
-T_f = 0.15  # Target pulse window [us]
-sigma = 0.0014  # Width parameter for super-Gaussian pulse
+T_c = np.pi / omega_c_amp  # Control pi-pulse duration = 10 ns (0.010 us)
+T_f = 0.15  # Target pulse half-window T_f = 150 ns (0.150 us)
+sigma = 0.0014  # Super-Gaussian width sigma = 1.4 ns (paper)
 
-gamma_r = 1.0 / 548.0  # Cs |r> decay rate [MHz]
-gamma_R = 1.0 / 505.0  # Rb |R> decay rate [MHz]
-gamma_P = 1.0 / 0.131  # Rb |P> decay rate [MHz]
+# Decoherence rates from main.tex, Sec. III.C "Decoherence channels and
+# gate fidelity". Lifetimes at T = 300 K including blackbody radiation.
+# Time unit throughout this script is microseconds.
+gamma_r = 1.0 / 340.0  # Cs |r> = |79 D_{5/2}>, tau_r ~ 340 us
+gamma_R = 1.0 / 260.0  # Rb |R> = |69 D_{5/2}>, tau_R ~ 260 us
+gamma_P = 1.0 / 0.131  # Rb |P> = |7 P_{3/2}>,  tau_P = 0.131 us
 
 args = {
     "omega_c_amp": omega_c_amp,

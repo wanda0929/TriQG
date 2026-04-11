@@ -51,17 +51,23 @@ from triqg.analysis import state_fidelity, average_gate_fidelity
 # =====================================================================
 # Physical parameters (same as ccx_gate_mesolve.py)
 # =====================================================================
-omega_cc_amp = 2 * np.pi * 100  # Control pulse Rabi frequency [MHz]
-omega_t_amp = 2 * np.pi * 50  # Target pulse Rabi frequency  [MHz]
+# Pulse and interaction parameters from the SelfCorrectingRydberg paper
+# (main.tex, Sec. III.B "Three-qubit CCX (Toffoli) gate").
+omega_cc_amp = 2 * np.pi * 100  # Cs control pi-pulse Rabi frequency [MHz]
+omega_t_amp = 2 * np.pi * 50  # Rb target sub-pulse Rabi frequency [MHz]
 
-T_cc = np.pi / omega_cc_amp  # Control pi-pulse duration
-T_t = np.pi / omega_t_amp  # Target sub-pulse duration
+T_cc = np.pi / omega_cc_amp  # Control pi-pulse duration  (= 5 ns)
+T_t = np.pi / omega_t_amp  # Target sub-pulse duration (= 10 ns)
 
-V_ct = 2 * np.pi * 200  # Rydberg blockade strength [MHz]
+V_ct = 2 * np.pi * 593  # Rb-Cs Rydberg blockade strength [MHz] (Table I)
 
-gamma_r = 1.0 / 548.0  # Cs |r> decay rate
-gamma_R = 1.0 / 505.0  # Rb |R> decay rate
-gamma_P = 1.0 / 0.131  # Rb |P> decay rate
+# Decoherence rates from main.tex, Sec. III.C "Decoherence channels and
+# gate fidelity". Lifetimes are quoted at T = 300 K including blackbody
+# radiation. Time throughout this script is in microseconds, so each
+# rate is 1/tau with tau in us.
+gamma_r = 1.0 / 340.0  # Cs |r> = |79 D_{5/2}>, tau_r ~ 340 us
+gamma_R = 1.0 / 260.0  # Rb |R> = |69 D_{5/2}>, tau_R ~ 260 us
+gamma_P = 1.0 / 0.131  # Rb |P> = |7 P_{3/2}>,  tau_P = 0.131 us
 
 args = {
     "omega_cc_amp": omega_cc_amp,
