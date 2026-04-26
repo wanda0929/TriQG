@@ -43,7 +43,7 @@ from triqg.visualization import plot_pulses, plot_populations
 # =====================================================================
 
 # Rabi frequencies [MHz, angular]
-omega_cc_amp = 2 * np.pi * 100  # Control pulse amplitude
+omega_cc_amp = 2 * np.pi * 50  # Control pulse amplitude
 omega_t_amp = 2 * np.pi * 50  # Target pulse amplitude
 
 # Timing (derived from amplitudes)
@@ -86,8 +86,8 @@ c_ops = build_collapse_operators(gamma_r, gamma_R, gamma_P)
 cs = CsAtom()
 rb = RbAtom()
 psi0 = composite_basis_state(
-    cs.level_index["1"],
-    cs.level_index["1"],
+    cs.level_index["0"],
+    cs.level_index["0"],
     rb.level_index["A"],
 )
 
@@ -95,9 +95,9 @@ psi0 = composite_basis_state(
 # Both controls in |1> -> no Rydberg excitation -> no blockade
 # -> target flips: |A> -> |B>
 psi_target = composite_basis_state(
-    cs.level_index["1"],
-    cs.level_index["1"],
-    rb.level_index["B"],
+    cs.level_index["0"],
+    cs.level_index["0"],
+    rb.level_index["A"],
 )
 
 # =====================================================================

@@ -253,3 +253,109 @@
              blockade. Alternative to EIT-based CNOT of seed paper.
              Explores beyond excitation-annihilation effect.}
 }
+
+% --- ADDED FOR: Pedersen reading note on average fidelity (2026-04) ---
+
+@article{pedersen2007,
+  title   = {Fidelity of quantum operations},
+  author  = {Pedersen, Line Hjortsh{\o}j and M{\o}ller, Niels Martin and
+             M{\o}lmer, Klaus},
+  journal = {Physics Letters A},
+  volume  = {367},
+  number  = {1--2},
+  pages   = {47--51},
+  year    = {2007},
+  doi     = {10.1016/j.physleta.2007.02.069},
+  note    = {Closed form for the Haar-average fidelity of a CPTP map:
+             $\bar F = [\mathrm{Tr}(MM^\dagger) + |\mathrm{Tr}(M)|^2]
+             /[n(n+1)]$ with $M = U_0^\dagger U$, and its Kraus-sum
+             generalization.}
+}
+
+@article{bowdrey2002,
+  title   = {Fidelity of single qubit maps},
+  author  = {Bowdrey, Mark D. and Oi, Daniel K. L. and Short, Anthony J.
+             and Banaszek, Konrad and Jones, Jonathan A.},
+  journal = {Physics Letters A},
+  volume  = {294},
+  number  = {5--6},
+  pages   = {258--260},
+  year    = {2002},
+  doi     = {10.1016/S0375-9601(02)00069-5},
+  note    = {Shows that averaging the state fidelity over the six Bloch
+             axis states (or a regular tetrahedron) on the Bloch sphere
+             reproduces the Haar-uniform average fidelity for a qubit
+             channel.}
+}
+
+@phdthesis{dankert2005,
+  title   = {Efficient Simulation of Random Quantum States and Operators},
+  author  = {Dankert, Christoph},
+  school  = {University of Waterloo},
+  year    = {2005},
+  note    = {Introduces unitary and state 2-designs and shows that
+             averaging quadratic state functionals (e.g. fidelity) over
+             a 2-design reproduces the Haar average. arXiv:quant-ph/0512217.}
+}
+
+@book{nielsenchuang,
+  title     = {Quantum Computation and Quantum Information},
+  author    = {Nielsen, Michael A. and Chuang, Isaac L.},
+  publisher = {Cambridge University Press},
+  year      = {2010},
+  edition   = {10th Anniversary},
+  isbn      = {9781107002173}
+}
+
+@article{nielsen2002,
+  title   = {A simple formula for the average gate fidelity of a quantum
+             dynamical operation},
+  author  = {Nielsen, Michael A.},
+  journal = {Physics Letters A},
+  volume  = {303},
+  number  = {4},
+  pages   = {249--252},
+  year    = {2002},
+  doi     = {10.1016/S0375-9601(02)01272-0},
+  note    = {Derives $\bar F = (d F_{\rm pro} + 1)/(d+1)$ relating the
+             average (Haar) gate fidelity to the entanglement/process
+             fidelity of a CPTP map. Equivalent to Pedersen's Eq.~(5)
+             and used internally by QuTiP's
+             \texttt{average\_gate\_fidelity}.}
+}
+
+@article{horodecki1999,
+  title   = {General teleportation channel, singlet fraction, and
+             quasidistillation},
+  author  = {Horodecki, Micha{\l} and Horodecki, Pawe{\l} and
+             Horodecki, Ryszard},
+  journal = {Physical Review A},
+  volume  = {60},
+  number  = {3},
+  pages   = {1888--1898},
+  year    = {1999},
+  doi     = {10.1103/PhysRevA.60.1888},
+  note    = {Derives the average fidelity formula for qubit channels;
+             cited by Pedersen (2007) as the one-qubit precursor of the
+             qudit closed form.}
+}
+
+@article{yu2022,
+  title   = {Multiqubit Toffoli gates and optimal geometry with
+             {Rydberg} atoms},
+  author  = {Yu, Dongmin and Wang, Han and Ma, Dongcheng and Zhao,
+             Xueliang and Qian, Jing},
+  journal = {Optics Express},
+  volume  = {30},
+  number  = {26},
+  pages   = {47209--47225},
+  year    = {2022},
+  doi     = {10.1364/OE.478055},
+  note    = {Eq.~(7) of the preprint defines the computational-basis
+             average gate fidelity
+             $\bar F = 2^{-(n+1)} \sum_k F_k$ over the $2^{n+1}$
+             classical inputs of an $n$-control Toffoli gate, which
+             was the metric used by the original TriQG scripts before
+             we switched to the Haar-averaged Pedersen formula.
+             arXiv:2203.14302.}
+}

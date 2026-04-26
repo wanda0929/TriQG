@@ -34,6 +34,7 @@ def build_hamiltonian(
     delta: float,
     V_ct: float,
     pulse_p: Callable = omega_p,
+    V_cc: float = 0.0,
 ) -> list:
     """
     Build the time-dependent Hamiltonian for the OR gate.
@@ -49,6 +50,19 @@ def build_hamiltonian(
         Pulse function for the target probe drive (|A>,|B> <-> |P>).
         Must have signature ``f(t, args) -> float``.
         Defaults to the Hanning (sin²) pulse ``omega_p``.
+    V_cc : float, optional
+        Same-species control-control (ancilla-ancilla) interaction
+        strength, in angular frequency units (rad/us).  Acts as a
+        static energy shift V_cc on the doubly-excited state |r r>.
+
+        For Cs-Cs (A1-A1) at the paper's rotated-lattice spacing
+        r_AA = a * sqrt(2) with a = 5 um, the paper (Table I of
+        main.tex) gives C_6 = -1449 GHz * um^6 and quotes the
+        magnitude V_cc/(2 pi) = 11.6 MHz.  Callers that want to
+        reproduce the paper should pass ``V_cc = 2*pi * 11.6``
+        (or the signed value ``-2*pi * 11.6`` -- the sign is a
+        global phase on the |r r, *> branch for computational basis
+        inputs).  Defaults to 0.0 (no ancilla-ancilla interaction).
 
     Returns
     -------
@@ -82,7 +96,11 @@ def build_hamiltonian(
     H_rydberg_c1 = V_ct * proj_r_c1 * proj_R_t
     H_rydberg_c2 = V_ct * proj_r_c2 * proj_R_t
 
-    H_static = H_detuning + H_rydberg_c1 + H_rydberg_c2
+    # Same-species control-control van der Waals interaction:
+    # V_cc * |r><r|_c1 ⊗ |r><r|_c2 ⊗ I_t   (main.tex, Table I, Cs-Cs row)
+    H_ancilla_ancilla = V_cc * proj_r_c1 * proj_r_c2
+
+    H_static = H_detuning + H_rydberg_c1 + H_rydberg_c2 + H_ancilla_ancilla
 
     # --- Drive operators (Hermitian coupling terms) ---
     # Control 1: |1><r| + |r><1| on subsystem 0
@@ -111,7 +129,7 @@ def build_hamiltonian(
     ]
 
 
-def build_ccx_hamiltonian(V_ct: float) -> list:
+def build_ccx_hamiltonian(V_ct: float, V_cc: float = 0.0) -> list:
     """
     Build the time-dependent Hamiltonian for the CCX (Toffoli) gate.
 
@@ -120,6 +138,13 @@ def build_ccx_hamiltonian(V_ct: float) -> list:
     V_ct : float
         Rydberg blockade interaction strength between each control
         and the target.
+    V_cc : float, optional
+        Same-species control-control (ancilla-ancilla) interaction
+        strength, in angular frequency units (rad/us).  Acts as a
+        static energy shift V_cc on the |r r> component of the two
+        controls.  See :func:`build_hamiltonian` for the paper value
+        (Cs-Cs at r_AA = 5*sqrt(2) um: V_cc/(2 pi) = 11.6 MHz).
+        Defaults to 0.0 (no ancilla-ancilla interaction).
 
     Returns
     -------
@@ -142,7 +167,15 @@ def build_ccx_hamiltonian(V_ct: float) -> list:
     proj_r_c2 = composite_projector(1, idx_r)
     proj_R_t = composite_projector(2, idx_R)
 
-    H_static = V_ct * proj_r_c1 * proj_R_t + V_ct * proj_r_c2 * proj_R_t
+    # Same-species control-control van der Waals interaction:
+    # V_cc * |r><r|_c1 ⊗ |r><r|_c2 ⊗ I_t   (main.tex, Table I, Cs-Cs row)
+    H_ancilla_ancilla = V_cc * proj_r_c1 * proj_r_c2
+
+    H_static = (
+        V_ct * proj_r_c1 * proj_R_t
+        + V_ct * proj_r_c2 * proj_R_t
+        + H_ancilla_ancilla
+    )
 
     # --- Drive operators ---
     # Control: |0><r| + |r><0| on each control subsystem

@@ -41,7 +41,7 @@ omega_R_amp = 2.5 * omega_p_amp  # Target Rydberg coupling amplitude
 delta = 2 * np.pi * 1200
 
 # Rydberg blockade interaction strength [MHz, angular]
-V_ct = 2 * np.pi * 5000
+V_ct = 2 * np.pi * 225
 
 # Timing
 T_c = np.pi / omega_c_amp  # Duration of control pi-pulse

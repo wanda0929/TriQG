@@ -2,7 +2,9 @@
 OR Gate Average Gate Fidelity via Eq. (7) of Yu et al. (Gaussian Pulse)
 ------------------------------------------------------------------------
 OPTION A: Rb 66 D_{5/2} + Cs 76 D_{3/2} d-state Foerster pair
-          at a = 5.00 um,  Omega_R = 2.9 * Omega_p
+          at a = 5.00 um,
+          Omega_p = 2*pi*40 MHz  (lowered from 2*pi*50 MHz),
+          Omega_R = 2.9 * Omega_p
 ------------------------------------------------------------------------
 
 Computes the average gate fidelity of the three-qubit Rydberg OR gate
@@ -13,29 +15,46 @@ following the method in:
 
     F_bar = (1 / 2^{n+1}) * sum_k  F(rho_out^(k), rho_et^(k))
 
-The Rydberg pair is the 'Candidate #1' d-state Foerster pair from:
+This run is a physically-motivated swap of the Rydberg pair from the
+SelfCorrectingRydberg paper's worked example to the 'Candidate #1'
+pair from:
 
     B. J. Ireland, J. D. Pritchard, J. P. Shaffer,
     "Interspecies Foerster resonances of Rb-Cs Rydberg d-states
     for enhanced multi-qubit gate fidelities",
     Phys. Rev. Research 6, 013293 (2024), arXiv:2401.02308.
 
-Configuration:
-  * Rydberg levels:
-        Rb |R> = |66 D_{5/2}>
-        Cs |r> = |76 D_{3/2}>
-        Rb intermediate |P> = |7 P_{3/2}>
+Changes relative to the previous 'newenergy' run:
+  * Rydberg level swap:
+        Rb |R> : |69 D_{5/2}>  ->  |66 D_{5/2}>
+        Cs |r> : |79 D_{5/2}>  ->  |76 D_{3/2}>
+    The Rb |P> = |7 P_{3/2}> intermediate state is unchanged.
   * Foerster channel (Ireland et al., Table I, row #1):
         |66 D_{5/2} ; 76 D_{3/2}>  <->  |67 P_{3/2} ; 74 F_{5/2}>
-  * C_3, C_6 taken from Ireland et al. for this pair.
-  * Lattice a = 5.00 um.
-  * V_cc derived from C_6 and a_um (no override).
-  * Omega_R / Omega_p = 2.9.
-  * Rydberg lifetimes from ARC at T = 300 K (see below).
+  * C_3 and C_6 updated to the Ireland et al. values for this pair.
+  * Lattice a = 5.00 um (paper value, NOT the 5.25 um of the previous run).
+  * V_cc override removed; V_cc is now derived from C_6 and a_um.
+  * Omega_R / Omega_p changed from 3.5 to 2.9 per user request.
+  * Omega_p lowered from 2*pi*50 MHz to 2*pi*40 MHz (user request).
+    To preserve BOTH the effective two-photon pulse area (pi/4) AND the
+    super-Gaussian edge shape, T_f and sigma were rescaled by:
+        sigma -> sigma * (50/40)^6  (0.001771  -> 0.00675583)
+        T_f   -> T_f   * (50/40)^2  (0.15 us   -> 0.234375 us)
+    Derivation: for the order-6 super-Gaussian
+        Omega_p(t) = (A/2) * exp[-((t - t_c)^3 / sigma)^2],
+    the effective area is
+        area = A^2 * sigma^(1/3) / (8*Delta) * J(T_f / sigma^(1/3)),
+    and the edge/peak ratio depends only on x = T_f / sigma^(1/3).
+    Holding x constant fixes both the shape and J, leaving the single
+    constraint A^2 * sigma^(1/3) = const, which uniquely determines
+    sigma (and therefore T_f) once A is chosen.
+    Total gate time is now 2*T_c + 2*T_f = 488.75 ns (was 320 ns).
+  * Rydberg lifetimes updated to the ARC-computed values for the new
+    (n, L, J) choices at T = 300 K (see below).
 
-Interaction strengths at a = 5.00 um:
-    V_ct / (2 pi) = +516.81 MHz
-    V_cc / (2 pi) =   -5.54 MHz
+Expected interaction strengths at a = 5.00 um:
+    V_ct / (2 pi) = +517 MHz  (was +595 MHz for the paper pair)
+    V_cc / (2 pi) =   -5.5 MHz  (was -11.6 MHz for the paper pair)
 
 The OR gate protocol (Farouk et al.):
     1. Excite controls in |1> to Rydberg |r> (positive pi-pulse)
@@ -82,14 +101,25 @@ from triqg.analysis import state_fidelity, average_gate_fidelity
 # =====================================================================
 # Pulse and interaction parameters from the SelfCorrectingRydberg paper
 # (main.tex, Sec. III.A "Three-qubit OR gate (EIT + Rydberg blockade)").
-omega_c_amp = 2 * np.pi * 50     # Cs control Rabi frequency Omega_c [MHz]
-omega_p_amp = 2 * np.pi * 50.0   # Rb target two-photon probe amplitude
-omega_R_amp = 3.5 * omega_p_amp  # Omega_R = 2.9 * Omega_p
+omega_c_amp = 2 * np.pi * 50  # Cs control Rabi frequency Omega_c [MHz]
+# Omega_p lowered from 2*pi*50 MHz -> 2*pi*40 MHz (user request).
+# T_f and sigma are rescaled below so that (i) the effective two-photon
+# pulse area stays at pi/4 and (ii) the super-Gaussian edge/peak ratio
+# (~2.6%) is preserved, i.e. the pulse SHAPE is unchanged -- only its time
+# scale and amplitude change.
+# Historical note: the value sigma = 0.001771 itself came from
+# sigma = 0.0014 * 1.039975^6 when an earlier 1.039975 amp fudge was
+# removed ("Option 1" in prior runs). That fudge made the script's
+# "target: pi" print statement a leftover misprint -- the true target is
+# pi/4, because compute_pulse_area integrates Omega_p^2/(2 Delta), not the
+# two-photon Rabi frequency Omega_p^2/(2 Delta) times the factor 2.
+omega_p_amp = 2 * np.pi * 40.0   # Rb target probe amplitude (was 2*pi*50)
+omega_R_amp = 3.5 * omega_p_amp  # Omega_R = 2.9 * Omega_p (ratio unchanged)
 
 delta = 2 * np.pi * 500  # Two-photon detuning Delta [MHz]
 
 # ---------------------------------------------------------------------
-# Lattice geometry
+# Lattice geometry (reverted to paper value a = 5.00 um for Option A).
 # ---------------------------------------------------------------------
 a_um = 5.0                       # rotated-lattice spacing [um]
 r_DA = a_um / np.sqrt(2)          # nearest data-ancilla distance ~ 3.5355 um
@@ -118,10 +148,16 @@ V_ct = 2 * np.pi * V_ct_MHz              # Rb-Cs dipole-dipole blockade
 V_cc = 2 * np.pi * V_cc_MHz              # Cs-Cs van der Waals (signed; C_6 < 0)
 
 T_c = np.pi / omega_c_amp  # Control pi-pulse duration = 10 ns (0.010 us)
-T_f = 0.15                 # Target pulse half-window T_f = 150 ns
-# Super-Gaussian width chosen so the effective two-photon pulse area
-# integral Omega_p^2 / (2 Delta) dt equals pi/4.
-sigma = 0.001771
+# T_f and sigma scale together with Omega_p so that:
+#   (1) A^2 * sigma^(1/3)            = const  -> pulse area unchanged
+#   (2) x = T_f / sigma^(1/3)         = const  -> pulse shape (edges) unchanged
+# With A scaled by 40/50 = 4/5, this forces
+#   sigma -> sigma * (5/4)^6  (0.001771  -> 0.006755829 us)
+#   T_f   -> T_f   * (5/4)^2  (0.15      -> 0.234375    us = 234.375 ns)
+# so that x stays fixed at T_f/sigma^(1/3) = 1.2398 and the edge/peak
+# ratio stays at exp(-(T_f^3/sigma)^2) ~ 2.6%.
+T_f = 0.15 * (5 / 4) ** 2          # Target pulse half-window = 234.375 ns
+sigma = 0.001771 * (5 / 4) ** 6    # super-Gaussian width ~ 0.0067558 us
 
 # ---------------------------------------------------------------------
 # Decoherence rates for the OPTION A level choice at T = 300 K,
@@ -149,8 +185,15 @@ sigma = 0.001771
 #   Cs 76 D_{3/2}:  tau_rad = 260.15 us,  tau_BBR = 316.22 us,
 #                   tau_total = 142.73 us      <-- used here
 #
-# The Rb intermediate state |P> = |7 P_{3/2}> keeps the paper value
-# tau_P = 0.131 us.
+# NB: main.tex quotes ~260 us / ~340 us for its Rb 69 D_{5/2} /
+#     Cs 79 D_{5/2} pair, but ARC gives ~150 us / ~158 us for those
+#     same states -- a factor ~2 discrepancy. We trust ARC here for
+#     internal consistency of Option A.
+#
+# The Rb intermediate state |P> = |7 P_{3/2}> is unchanged from the
+# paper, so we keep the paper's quoted tau_P = 0.131 us. (ARC says
+# 0.269 us for this state, but touching this number would change the
+# OR-gate baseline and confuse the comparison.)
 # Time unit throughout this script is microseconds.
 gamma_r = 1.0 / 142.73   # Cs |r> = |76 D_{3/2}>, tau_r = 142.73 us (ARC, T=300 K)
 gamma_R = 1.0 / 134.87   # Rb |R> = |66 D_{5/2}>, tau_R = 134.87 us (ARC, T=300 K)

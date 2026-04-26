@@ -1,9 +1,7 @@
 """
 OR Gate Average Gate Fidelity via Eq. (7) of Yu et al. (Gaussian Pulse)
-------------------------------------------------------------------------
-OPTION A: Rb 66 D_{5/2} + Cs 76 D_{3/2} d-state Foerster pair
-          at a = 5.00 um,  Omega_R = 2.9 * Omega_p
-------------------------------------------------------------------------
+WITH same-species ancilla-ancilla (Cs-Cs) van der Waals interaction
+========================================================================
 
 Computes the average gate fidelity of the three-qubit Rydberg OR gate
 following the method in:
@@ -13,29 +11,9 @@ following the method in:
 
     F_bar = (1 / 2^{n+1}) * sum_k  F(rho_out^(k), rho_et^(k))
 
-The Rydberg pair is the 'Candidate #1' d-state Foerster pair from:
-
-    B. J. Ireland, J. D. Pritchard, J. P. Shaffer,
-    "Interspecies Foerster resonances of Rb-Cs Rydberg d-states
-    for enhanced multi-qubit gate fidelities",
-    Phys. Rev. Research 6, 013293 (2024), arXiv:2401.02308.
-
-Configuration:
-  * Rydberg levels:
-        Rb |R> = |66 D_{5/2}>
-        Cs |r> = |76 D_{3/2}>
-        Rb intermediate |P> = |7 P_{3/2}>
-  * Foerster channel (Ireland et al., Table I, row #1):
-        |66 D_{5/2} ; 76 D_{3/2}>  <->  |67 P_{3/2} ; 74 F_{5/2}>
-  * C_3, C_6 taken from Ireland et al. for this pair.
-  * Lattice a = 5.00 um.
-  * V_cc derived from C_6 and a_um (no override).
-  * Omega_R / Omega_p = 2.9.
-  * Rydberg lifetimes from ARC at T = 300 K (see below).
-
-Interaction strengths at a = 5.00 um:
-    V_ct / (2 pi) = +516.81 MHz
-    V_cc / (2 pi) =   -5.54 MHz
+This version uses a super-Gaussian pulse (order 6) instead of the Hanning pulse
+AND additionally includes the same-species control-control interaction V_cc
+from main.tex Table I (Cs-Cs van der Waals at r_AA = a*sqrt(2) ~ 7.07 um).
 
 The OR gate protocol (Farouk et al.):
     1. Excite controls in |1> to Rydberg |r> (positive pi-pulse)
@@ -82,79 +60,35 @@ from triqg.analysis import state_fidelity, average_gate_fidelity
 # =====================================================================
 # Pulse and interaction parameters from the SelfCorrectingRydberg paper
 # (main.tex, Sec. III.A "Three-qubit OR gate (EIT + Rydberg blockade)").
-omega_c_amp = 2 * np.pi * 50     # Cs control Rabi frequency Omega_c [MHz]
-omega_p_amp = 2 * np.pi * 50.0   # Rb target two-photon probe amplitude
-omega_R_amp = 3.5 * omega_p_amp  # Omega_R = 2.9 * Omega_p
+omega_c_amp = 2 * np.pi * 50  # Cs control Rabi frequency Omega_c [MHz]
+# Paper value: Omega_p = 2 pi * 50 MHz. The extra factor 1.039975 is a
+# numerical calibration so the super-Gaussian (order 6) target envelope
+# satisfies the two-photon area constraint int Omega_p^2 / (2 delta) dt = pi.
+omega_p_amp = 2 * np.pi * 50.0 * 1.039975  # Rb target probe amplitude [MHz]
+omega_R_amp = 3.5 * omega_p_amp  # Omega_R = 3.5 * Omega_p (paper)
 
 delta = 2 * np.pi * 500  # Two-photon detuning Delta [MHz]
+V_ct = 2 * np.pi * 593  # Rb-Cs Rydberg blockade V_ct [MHz] (Table I)
 
-# ---------------------------------------------------------------------
-# Lattice geometry
-# ---------------------------------------------------------------------
-a_um = 5.0                       # rotated-lattice spacing [um]
-r_DA = a_um / np.sqrt(2)          # nearest data-ancilla distance ~ 3.5355 um
-r_AA = a_um * np.sqrt(2)          # nearest same-type ancilla-ancilla ~ 7.0711 um
-
-# ---------------------------------------------------------------------
-# Rydberg interaction coefficients for the OPTION A Foerster pair
-# Rb |66 D_{5/2}> + Cs |76 D_{3/2}>
-# at theta = 90 deg (quantization axis perpendicular to the array).
-#
-# Source: Ireland, Pritchard & Shaffer, Phys. Rev. Research 6, 013293 (2024),
-#         Table I row 1 (candidate #1), also tabulated locally in
-#         reference/energy_level_inter.md.
-#
-# Foerster channel:
-#     |Rb 66 D_{5/2}; Cs 76 D_{3/2}>  <->  |Rb 67 P_{3/2}; Cs 74 F_{5/2}>
-# Blockade fidelity (single-control, Ireland et al.): P_1r = 0.9997
-# ---------------------------------------------------------------------
-C3_tilde = 22.84                  # Effective Forster C_3 [GHz * um^3]
-C6_CsCs = -692.9                  # Cs-Cs vdW C_6 [GHz * um^6], SIGNED
-
-# Derived blockade strengths (in angular MHz = rad / us since t is in us).
-V_ct_MHz = 1000.0 * C3_tilde / r_DA**3   # ~ +516.92 MHz at a = 5.00 um
-V_cc_MHz = 1000.0 * C6_CsCs  / r_AA**6   # ~   -5.543 MHz at a = 5.00 um
-V_ct = 2 * np.pi * V_ct_MHz              # Rb-Cs dipole-dipole blockade
-V_cc = 2 * np.pi * V_cc_MHz              # Cs-Cs van der Waals (signed; C_6 < 0)
+# Same-species ancilla-ancilla interaction (Cs-Cs van der Waals).
+# From main.tex Table I: C_6 = -1449 GHz * um^6, at r_AA = a*sqrt(2) ~ 7.07 um
+# this gives V = C_6 / r_AA^6 = -1449 / 125000 GHz = -11.592 MHz, which the
+# paper quotes as |V|/(2pi) = 11.6 MHz. We pass the signed (negative) value
+# here for physical fidelity; for computational-basis inputs the sign is a
+# global phase on the |r r, *> branch and does not affect F_k, but being
+# consistent with the microscopic C_6 < 0 costs nothing.
+V_cc = -2 * np.pi * 11.6  # Cs-Cs vdW at r_AA = 5*sqrt(2) um [MHz, Table I]
 
 T_c = np.pi / omega_c_amp  # Control pi-pulse duration = 10 ns (0.010 us)
-T_f = 0.15                 # Target pulse half-window T_f = 150 ns
-# Super-Gaussian width chosen so the effective two-photon pulse area
-# integral Omega_p^2 / (2 Delta) dt equals pi/4.
-sigma = 0.001771
+T_f = 0.15  # Target pulse half-window T_f = 150 ns (0.150 us)
+sigma = 0.0014  # Super-Gaussian width sigma = 1.4 ns (paper)
 
-# ---------------------------------------------------------------------
-# Decoherence rates for the OPTION A level choice at T = 300 K,
-# including blackbody radiation.
-#
-# Sources for the two Rydberg-state lifetimes:
-#   [1] N. Sibalic, J. D. Pritchard, C. S. Adams, K. J. Weatherill,
-#       "ARC: An open-source library for calculating properties of
-#       alkali Rydberg atoms", Comp. Phys. Commun. 220, 319 (2017),
-#       arXiv:1612.05529. ARC implements the
-#   [2] I. I. Beterov, I. I. Ryabtsev, D. B. Tretyakov, V. M. Entin,
-#       "Quasiclassical calculations of blackbody-radiation-induced
-#       depopulation rates and effective lifetimes of Rydberg nS, nP,
-#       and nD alkali-metal atoms with n <= 80",
-#       Phys. Rev. A 79, 052504 (2009), arXiv:0902.4995
-#   BBR formulas, combined with radiative rates from Einstein A
-#   coefficients and standard quantum defects.
-#
-# Computed via:  atom.getStateLifetime(n, l, j, temperature=300,
-#                                       includeLevelsUpTo=n+30)
-#
-# Values at T = 300 K from ARC 3.10.2:
-#   Rb 66 D_{5/2}:  tau_rad = 294.31 us,  tau_BBR = 248.96 us,
-#                   tau_total = 134.87 us      <-- used here
-#   Cs 76 D_{3/2}:  tau_rad = 260.15 us,  tau_BBR = 316.22 us,
-#                   tau_total = 142.73 us      <-- used here
-#
-# The Rb intermediate state |P> = |7 P_{3/2}> keeps the paper value
-# tau_P = 0.131 us.
+# Decoherence rates from main.tex, Sec. III.C "Decoherence channels and
+# gate fidelity". Lifetimes at T = 300 K including blackbody radiation.
 # Time unit throughout this script is microseconds.
-gamma_r = 1.0 / 142.73   # Cs |r> = |76 D_{3/2}>, tau_r = 142.73 us (ARC, T=300 K)
-gamma_R = 1.0 / 134.87   # Rb |R> = |66 D_{5/2}>, tau_R = 134.87 us (ARC, T=300 K)
-gamma_P = 1.0 / 0.131    # Rb |P> = |7 P_{3/2}>,  tau_P = 0.131 us (paper)
+gamma_r = 1.0 / 340.0  # Cs |r> = |79 D_{5/2}>, tau_r ~ 340 us
+gamma_R = 1.0 / 260.0  # Rb |R> = |69 D_{5/2}>, tau_R ~ 260 us
+gamma_P = 1.0 / 0.131  # Rb |P> = |7 P_{3/2}>,  tau_P = 0.131 us
 
 args = {
     "omega_c_amp": omega_c_amp,
@@ -232,20 +166,13 @@ for c1_bit in range(2):
 # Run mesolve for each input and collect fidelities
 # =====================================================================
 print(f"\nOR Gate Average Gate Fidelity [Yu et al., Eq. (7)] - Gaussian Pulse")
-print(f"Option A: Rb 66 D_5/2 + Cs 76 D_3/2 at a = {a_um} um,  Omega_R/Omega_p = 2.9")
+print(f"with Cs-Cs ancilla-ancilla interaction V_cc")
 print(f"====================================================================")
 print(f"n_controls = {n_controls},  basis states = {len(basis_inputs)}")
 print(f"T_c = {T_c * 1e3:.3f} ns,  T_f = {T_f * 1e3:.3f} ns")
 print(f"sigma = {sigma},  delta = {delta / (2 * np.pi):.1f} MHz")
-print(f"Omega_R/Omega_p = {omega_R_amp / omega_p_amp:.2f}")
-print(f"Lattice:  a = {a_um} um, r_DA = {r_DA:.4f} um, r_AA = {r_AA:.4f} um")
-print(f"Foerster pair: Rb 66 D_5/2 + Cs 76 D_3/2 (Ireland et al. 2024)")
-print(f"  C3_tilde = {C3_tilde} GHz*um^3,  C6_CsCs = {C6_CsCs} GHz*um^6")
-print(f"V_ct/(2pi) = +{V_ct_MHz:7.3f} MHz  (Rb-Cs d-state Forster, derived)")
-print(f"V_cc/(2pi) = {V_cc_MHz:+7.3f} MHz  (Cs-Cs vdW, derived)")
-print(f"V_ct/Delta    = {V_ct_MHz/500.0:.3f}")
-print(f"|V_cc|/Omega_c = {abs(V_cc_MHz)/50.0:.3f}")
-print(f"Lifetimes (ARC, T=300 K):  tau_r = 142.73 us,  tau_R = 134.87 us,  tau_P = 0.131 us (paper)")
+print(f"V_ct/(2pi) = {V_ct / (2 * np.pi):.1f} MHz  (Rb-Cs blockade)")
+print(f"V_cc/(2pi) = {V_cc / (2 * np.pi):.3f} MHz  (Cs-Cs vdW, Table I)")
 print(f"Total gate time = {t_total * 1e3:.3f} ns\n")
 
 fidelity_pairs = []
