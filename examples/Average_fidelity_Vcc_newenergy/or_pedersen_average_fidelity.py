@@ -76,7 +76,7 @@ r_AA = a_um * np.sqrt(2)
 C3_tilde = 22.84                   # GHz * um^3
 C6_CsCs = -692.9                   # GHz * um^6 (signed)
 V_ct_MHz = 1000.0 * C3_tilde / r_DA**3
-V_cc_MHz = 1000.0 * C6_CsCs / r_AA**6
+V_cc_MHz = 1000.0 * C6_CsCs / r_AA**6 * 0.0
 V_ct = 2 * np.pi * V_ct_MHz
 V_cc = 2 * np.pi * V_cc_MHz
 

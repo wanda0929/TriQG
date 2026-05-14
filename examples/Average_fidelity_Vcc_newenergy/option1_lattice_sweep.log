@@ -1,0 +1,39 @@
+============================================================================
+Option 1 magic-spacing lattice sweep
+  a in [2.5, 6.0] step 0.1 um  (36 points x 2 gates = 72 runs)
+  output: /Users/wanda/QSTC_PROJECT/TriQG/examples/Average_fidelity_Vcc_newenergy/option1_lattice_sweep.json
+          /Users/wanda/QSTC_PROJECT/TriQG/examples/Average_fidelity_Vcc_newenergy/option1_lattice_sweep.png
+============================================================================
+[22/36] a=4.60 um  CCX  V_cc/(2pi)=  -9.142 MHz  phi_Vcc=-0.549 pi  T_P=0.99485  F_raw=0.54842  F_PC=0.99531  (10.2 s)
+[22/36] a=4.60 um  OR   V_cc/(2pi)=  -9.142 MHz  phi_Vcc=-5.485 pi  T_P=0.98732  F_raw=0.25059  F_PC=0.98500  (44.4 s)
+[23/36] a=4.70 um  CCX  V_cc/(2pi)=  -8.035 MHz  phi_Vcc=-0.482 pi  T_P=0.99603  F_raw=0.62403  F_PC=0.99636  (8.0 s)
+[23/36] a=4.70 um  OR   V_cc/(2pi)=  -8.035 MHz  phi_Vcc=-4.821 pi  T_P=0.99622  F_raw=0.11466  F_PC=0.99293  (42.4 s)
+[24/36] a=4.80 um  CCX  V_cc/(2pi)=  -7.082 MHz  phi_Vcc=-0.425 pi  T_P=0.99691  F_raw=0.69151  F_PC=0.99714  (7.4 s)
+[24/36] a=4.80 um  OR   V_cc/(2pi)=  -7.082 MHz  phi_Vcc=-4.249 pi  T_P=0.98923  F_raw=0.27389  F_PC=0.98660  (38.9 s)
+[25/36] a=4.90 um  CCX  V_cc/(2pi)=  -6.258 MHz  phi_Vcc=-0.375 pi  T_P=0.98810  F_raw=0.74227  F_PC=0.98925  (8.3 s)
+[25/36] a=4.90 um  OR   V_cc/(2pi)=  -6.258 MHz  phi_Vcc=-3.755 pi  T_P=0.99073  F_raw=0.31178  F_PC=0.98782  (36.4 s)
+[26/36] a=5.00 um  CCX  V_cc/(2pi)=  -5.543 MHz  phi_Vcc=-0.333 pi  T_P=0.99674  F_raw=0.79628  F_PC=0.99700  (6.3 s)
+[26/36] a=5.00 um  OR   V_cc/(2pi)=  -5.543 MHz  phi_Vcc=-3.326 pi  T_P=0.99617  F_raw=0.18056  F_PC=0.99257  (40.2 s)
+[27/36] a=5.10 um  CCX  V_cc/(2pi)=  -4.922 MHz  phi_Vcc=-0.295 pi  T_P=0.99763  F_raw=0.83554  F_PC=0.99779  (6.3 s)
+[27/36] a=5.10 um  OR   V_cc/(2pi)=  -4.922 MHz  phi_Vcc=-2.953 pi  T_P=0.99801  F_raw=0.11117  F_PC=0.99409  (39.2 s)
+[28/36] a=5.20 um  CCX  V_cc/(2pi)=  -4.381 MHz  phi_Vcc=-0.263 pi  T_P=0.99065  F_raw=0.86225  F_PC=0.99153  (6.6 s)
+[28/36] a=5.20 um  OR   V_cc/(2pi)=  -4.381 MHz  phi_Vcc=-2.629 pi  T_P=0.99709  F_raw=0.16679  F_PC=0.99315  (35.3 s)
+[29/36] a=5.30 um  CCX  V_cc/(2pi)=  -3.908 MHz  phi_Vcc=-0.234 pi  T_P=0.99153  F_raw=0.88554  F_PC=0.99230  (6.2 s)
+[29/36] a=5.30 um  OR   V_cc/(2pi)=  -3.908 MHz  phi_Vcc=-2.345 pi  T_P=0.99611  F_raw=0.26411  F_PC=0.99212  (33.2 s)
+[30/36] a=5.40 um  CCX  V_cc/(2pi)=  -3.493 MHz  phi_Vcc=-0.210 pi  T_P=0.99719  F_raw=0.91152  F_PC=0.99739  (4.9 s)
+[30/36] a=5.40 um  OR   V_cc/(2pi)=  -3.493 MHz  phi_Vcc=-2.096 pi  T_P=0.99602  F_raw=0.32397  F_PC=0.99186  (34.8 s)
+[31/36] a=5.50 um  CCX  V_cc/(2pi)=  -3.129 MHz  phi_Vcc=-0.188 pi  T_P=0.99802  F_raw=0.92813  F_PC=0.99813  (6.3 s)
+[31/36] a=5.50 um  OR   V_cc/(2pi)=  -3.129 MHz  phi_Vcc=-1.877 pi  T_P=0.99657  F_raw=0.32468  F_PC=0.99215  (36.6 s)
+[32/36] a=5.60 um  CCX  V_cc/(2pi)=  -2.808 MHz  phi_Vcc=-0.169 pi  T_P=0.99441  F_raw=0.93870  F_PC=0.99486  (5.2 s)
+[32/36] a=5.60 um  OR   V_cc/(2pi)=  -2.808 MHz  phi_Vcc=-1.685 pi  T_P=0.99729  F_raw=0.28331  F_PC=0.99258  (34.9 s)
+[33/36] a=5.70 um  CCX  V_cc/(2pi)=  -2.525 MHz  phi_Vcc=-0.152 pi  T_P=0.97537  F_raw=0.93069  F_PC=0.97759  (4.6 s)
+[33/36] a=5.70 um  OR   V_cc/(2pi)=  -2.525 MHz  phi_Vcc=-1.515 pi  T_P=0.99789  F_raw=0.22638  F_PC=0.99287  (35.2 s)
+[34/36] a=5.80 um  CCX  V_cc/(2pi)=  -2.275 MHz  phi_Vcc=-0.137 pi  T_P=0.98895  F_raw=0.94953  F_PC=0.98992  (5.3 s)
+[34/36] a=5.80 um  OR   V_cc/(2pi)=  -2.275 MHz  phi_Vcc=-1.365 pi  T_P=0.99830  F_raw=0.17406  F_PC=0.99297  (31.5 s)
+[35/36] a=5.90 um  CCX  V_cc/(2pi)=  -2.053 MHz  phi_Vcc=-0.123 pi  T_P=0.99543  F_raw=0.96239  F_PC=0.99580  (5.3 s)
+[35/36] a=5.90 um  OR   V_cc/(2pi)=  -2.053 MHz  phi_Vcc=-1.232 pi  T_P=0.99852  F_raw=0.13653  F_PC=0.99288  (35.9 s)
+[36/36] a=6.00 um  CCX  V_cc/(2pi)=  -1.856 MHz  phi_Vcc=-0.111 pi  T_P=0.99932  F_raw=0.97012  F_PC=0.99929  (4.1 s)
+[36/36] a=6.00 um  OR   V_cc/(2pi)=  -1.856 MHz  phi_Vcc=-1.114 pi  T_P=0.99863  F_raw=0.11626  F_PC=0.99266  (33.9 s)
+
+Sweep complete in 647.8 s = 10.8 min
+plot saved to /Users/wanda/QSTC_PROJECT/TriQG/examples/Average_fidelity_Vcc_newenergy/option1_lattice_sweep.png

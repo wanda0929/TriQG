@@ -34,7 +34,7 @@ def omega_c(t: float, args: dict) -> float:
     if 0 <= t < T_c:
         return amp / 2
     elif T_c + 2 * T_f <= t < 2 * T_c + 2 * T_f:
-        return -amp / 2
+        return - amp / 2
     else:
         return 0.0
 
@@ -160,7 +160,7 @@ def omega_t2(t: float, args: dict) -> float:
     T_t = args["T_t"]
 
     if T_cc + T_t <= t < T_cc + 2 * T_t:
-        return amp / 2
+        return - amp / 2
     else:
         return 0.0
 

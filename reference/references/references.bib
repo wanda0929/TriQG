@@ -359,3 +359,188 @@
              we switched to the Haar-averaged Pedersen formula.
              arXiv:2203.14302.}
 }
+
+% ==========================================================================
+% ADDED FOR: Vcc phase-correction free-of-charge note (2026-05)
+% Canonical references for virtual-Z gates, Pauli-frame tracking, and
+% phase-corrected Pedersen fidelity in atomic-system experiments.
+% ==========================================================================
+
+@article{mckay2017,
+  title   = {Efficient {Z} gates for quantum computing},
+  author  = {McKay, David C. and Wood, Christopher J. and Sheldon, Sarah
+             and Chow, Jerry M. and Gambetta, Jay M.},
+  journal = {Physical Review A},
+  volume  = {96},
+  pages   = {022330},
+  year    = {2017},
+  doi     = {10.1103/PhysRevA.96.022330},
+  url     = {https://arxiv.org/abs/1612.00858},
+  note    = {Canonical reference for ``virtual-$Z$'' gates: a single-qubit
+             $Z(\phi)$ rotation is implemented by changing the phase
+             reference of all subsequent drive pulses, and is therefore
+             error-free, instantaneous, and incurs zero decoherence.
+             Demonstrated on superconducting transmons, but the algebra
+             $Z(\alpha) X_{\phi}(\theta) = X_{\phi-\alpha}(\theta) Z(\alpha)$
+             is platform-agnostic and applies verbatim to neutral-atom and
+             trapped-ion qubits.}
+}
+
+@article{knill2005,
+  title   = {Quantum computing with realistically noisy devices},
+  author  = {Knill, E.},
+  journal = {Nature},
+  volume  = {434},
+  pages   = {39--44},
+  year    = {2005},
+  doi     = {10.1038/nature03350},
+  url     = {https://arxiv.org/abs/quant-ph/0410199},
+  note    = {Introduces the idea that Pauli (and more generally Clifford)
+             byproduct operators in fault-tolerant circuits can be tracked
+             classically rather than physically applied. The basis of
+             ``Pauli-frame tracking'' used to absorb residual diagonal
+             phases in modern atomic-qubit experiments.}
+}
+
+@article{riesebos2017,
+  title   = {Pauli frames for quantum computer architectures},
+  author  = {Riesebos, Leon and Fu, Xiang and Lao, Lingling and
+             Almudever, Carmen G. and Sebastiano, Fabio and
+             Versluis, Richard and Charbon, Edoardo and
+             Bertels, Koen},
+  booktitle = {Proceedings of the 54th Annual Design Automation Conference},
+  year    = {2017},
+  pages   = {76:1--76:6},
+  doi     = {10.1145/3061639.3062300},
+  note    = {Implementation-level description of Pauli-frame tracking:
+             a Pauli (or diagonal-Clifford) byproduct from a previous gate
+             is stored in a classical register and propagated through
+             subsequent Cliffords by table look-up; only at non-Clifford
+             gates or measurements does it incur any cost. The mechanism
+             by which a parasitic CZ from $V_{cc}$ is absorbed at zero
+             gate cost in a Clifford-rich circuit.}
+}
+
+@article{levine2019,
+  title   = {Parallel Implementation of High-Fidelity Multiqubit Gates with
+             Neutral Atoms},
+  author  = {Levine, Harry and Keesling, Alexander and Semeghini, Giulia
+             and Omran, Ahmed and Wang, Tout T. and Ebadi, Sepehr and
+             Bernien, Hannes and Greiner, Markus and Vuleti{\'c}, Vladan
+             and Pichler, Hannes and Lukin, Mikhail D.},
+  journal = {Physical Review Letters},
+  volume  = {123},
+  pages   = {170503},
+  year    = {2019},
+  doi     = {10.1103/PhysRevLett.123.170503},
+  url     = {https://arxiv.org/abs/1908.06101},
+  note    = {Reports a $99.1\%$ Bell-state and $97.4\%$ controlled-phase
+             Rydberg gate on Rb. The reported number is a
+             \emph{phase-corrected} fidelity: single-qubit $Z$ rotations
+             induced by light shifts and the gate's intrinsic dynamical
+             phase are absorbed into the target unitary $D \cdot U_0$.
+             Supplementary material gives the explicit diagonal $D$.
+             Direct precedent for the convention used in this work.}
+}
+
+@article{madjarov2020,
+  title   = {High-fidelity entanglement and detection of alkaline-earth
+             {Rydberg} atoms},
+  author  = {Madjarov, Ivaylo S. and Covey, Jacob P. and Shaw, Adam L.
+             and Choi, Joonhee and Kale, Anant and Cooper, Alexandre and
+             Pichler, Hannes and Schkolnik, Vladimir and Williams,
+             Jason R. and Endres, Manuel},
+  journal = {Nature Physics},
+  volume  = {16},
+  pages   = {857--861},
+  year    = {2020},
+  doi     = {10.1038/s41567-020-0903-z},
+  url     = {https://arxiv.org/abs/2001.04455},
+  note    = {Sr Rydberg-dressed CZ gate with $F = 0.991$. Reports both raw
+             and phase-corrected average gate fidelity, with the
+             single-qubit $Z$-rotation correction explicitly identified as
+             a virtual-frame change.}
+}
+
+@article{graham2022,
+  title   = {Multi-qubit entanglement and algorithms on a neutral-atom
+             quantum computer},
+  author  = {Graham, T. M. and Song, Y. and Scott, J. and Poole, C.
+             and Phuttitarn, L. and Jooya, K. and Eichler, P. and
+             Jiang, X. and Marra, A. and Grinkemeyer, B. and
+             Kwon, M. and Ebert, M. and Cherek, J. and Lichtman, M. T.
+             and Gillette, M. and Gilbert, J. and Bowman, D. and
+             Ballance, T. and Campbell, C. and Dahl, E. D. and
+             Crawford, O. and Blunt, N. S. and Rogers, B. and
+             Noel, T. and Saffman, M.},
+  journal = {Nature},
+  volume  = {604},
+  pages   = {457--462},
+  year    = {2022},
+  doi     = {10.1038/s41586-022-04603-6},
+  url     = {https://arxiv.org/abs/2112.14589},
+  note    = {Cs neutral-atom programmable QC running multi-qubit algorithms.
+             Single-qubit $Z$ rotations are implemented as virtual phase
+             updates of the Raman drive (no laser pulse), explicitly stated
+             in the Methods. Concrete experimental demonstration that
+             virtual-$Z$ in atomic systems is platform-equivalent to its
+             use in superconducting qubits.}
+}
+
+@article{bluvstein2024,
+  title   = {Logical quantum processor based on reconfigurable atom arrays},
+  author  = {Bluvstein, Dolev and Evered, Simon J. and Geim, Alexandra A.
+             and Li, Sophie H. and Zhou, Hengyun and Manovitz, Tom and
+             Ebadi, Sepehr and Cain, Madelyn and Kalinowski, Marcin and
+             Hangleiter, Dominik and others},
+  journal = {Nature},
+  volume  = {626},
+  pages   = {58--65},
+  year    = {2024},
+  doi     = {10.1038/s41586-023-06927-3},
+  url     = {https://arxiv.org/abs/2312.03982},
+  note    = {Demonstrates a fault-tolerance-relevant neutral-atom logical
+             processor that relies on Pauli-frame tracking through Clifford
+             layers; non-Clifford operations are implemented via injected
+             magic states. Industrial-scale evidence that diagonal
+             byproducts (single-qubit $Z$, parasitic $CZ$) are absorbed
+             into the classical control software at zero gate cost.}
+}
+
+@article{maller2015,
+  title   = {{Rydberg}-blockade controlled-{NOT} gate and entanglement in
+             a 2{D} array of neutral-atom qubits},
+  author  = {Maller, K. M. and Lichtman, M. T. and Xia, T. and Sun, Y.
+             and Piotrowicz, M. J. and Carr, A. W. and Isenhower, L.
+             and Saffman, M.},
+  journal = {Physical Review A},
+  volume  = {92},
+  pages   = {022336},
+  year    = {2015},
+  doi     = {10.1103/PhysRevA.92.022336},
+  url     = {https://arxiv.org/abs/1506.08496},
+  note    = {Early Rydberg-blockade CNOT in a 2D Cs array. Reports
+             phase-corrected fidelity, with the dynamical phase absorbed
+             by a software $Z$ rotation tracked through subsequent gates.}
+}
+
+@article{bluvstein2022,
+  title   = {A quantum processor based on coherent transport of entangled
+             atom arrays},
+  author  = {Bluvstein, Dolev and Levine, Harry and Semeghini, Giulia and
+             Wang, Tout T. and Ebadi, Sepehr and Kalinowski, Marcin and
+             Keesling, Alexander and Maskara, Nishad and Pichler, Hannes
+             and Greiner, Markus and Vuleti{\'c}, Vladan and
+             Lukin, Mikhail D.},
+  journal = {Nature},
+  volume  = {604},
+  pages   = {451--456},
+  year    = {2022},
+  doi     = {10.1038/s41586-022-04592-6},
+  url     = {https://arxiv.org/abs/2112.03923},
+  note    = {Multi-zone neutral-atom processor with mid-circuit transport.
+             Reports gate fidelities with explicit phase-correction
+             accounting; the reconfigurable transport phase is tracked in
+             software (Pauli/Clifford frame) rather than physically
+             undone.}
+}
