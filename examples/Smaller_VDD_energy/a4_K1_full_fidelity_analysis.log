@@ -1,0 +1,140 @@
+/Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+==============================================================================
+  Full fidelity analysis at a = 4.0 um, K = 1
+  Energy levels: Rb 54 D_3/2 + Cs 62 D_5/2 (smaller-V_DD redesign)
+==============================================================================
+V_ct / (2 pi) = +441.942 MHz
+V_DD / (2 pi) =  +2.2144 MHz  ->  R_DD = 199.6
+V_cc / (2 pi) =  -2.7771 MHz  ->  R_AA = 159.1
+Lifetimes (ARC):  tau_R = 164.55 us,  tau_r = 138.87 us,  tau_P = 0.270 us
+
+OR drive params (K = 1 champion):
+  Omega_p / (2 pi) = 65.0 MHz
+  Omega_R / Omega_p = 3.00
+  Omega_c / (2 pi) = 60.0 MHz
+  Delta   / (2 pi) = 500.0 MHz
+  K = 1.0,  alpha = 4.0
+  sigma = 0.367 ns, T_f = 113.65 ns, T_c = 8.33 ns
+  T_tot_OR = 243.96 ns
+
+==============================================================================
+  OR gate  (K = 1, a = 4 um champion)
+==============================================================================
+Total gate time:  T_tot = 243.964 ns
+
+  [a] 8 per-input basis fidelities  (mesolve, with decoherence)
+      F( |0,0,A>    -> |0,0,A>    ) = 0.997742
+      F( |0,0,B>    -> |0,0,B>    ) = 0.997742
+      F( |0,1,A>    -> |0,1,B>    ) = 0.994111
+      F( |0,1,B>    -> |0,1,A>    ) = 0.994111
+      F( |1,0,A>    -> |1,0,B>    ) = 0.994111
+      F( |1,0,B>    -> |1,0,A>    ) = 0.994111
+      F( |1,1,A>    -> |1,1,B>    ) = 0.993866
+      F( |1,1,B>    -> |1,1,A>    ) = 0.993866
+      F_bar_basis  (1/d) sum_k F_k         = 0.994958
+
+  [b] Pedersen Choi tensor  (64 mesolve runs, with decoherence)
+      Choi tensor built in 6.8 s
+      Survival T_P                          = 0.998689
+      F_pro  (process fidelity, raw)        = 0.038085
+      F_bar  (Pedersen Haar-averaged, raw)  = 0.144965
+
+  [c] Noiseless unitary Pedersen  (decoherence OFF)
+      noiseless propagator in 1.0 s
+      F_pro_u   = |Tr(U0^dag U_eff)|^2 / 64 = 0.038264
+      F_bar_u   (Pedersen, no decoherence)  = 0.145123
+      branch | mag.   | phi/pi   | label
+             | 0.9990 | -0.0130  | |0,0,A>
+             | 0.9990 | -0.0130  | |0,0,B>
+             | 0.9984 | -0.9819  | |0,1,A>
+             | 0.9984 | -0.9819  | |0,1,B>
+             | 0.9984 | -0.9819  | |1,0,A>
+             | 0.9984 | -0.9819  | |1,0,B>
+             | 0.9991 | +0.3039  | |1,1,A>
+             | 0.9991 | +0.3039  | |1,1,B>
+
+  [d] Phase-corrected Pedersen  (optimal diagonal D absorbed)
+      optimization in 0.05 s
+      F_pro_pc   (process, virtual-Z-absorbed)  = 0.994467
+      F_bar_pc   (Pedersen + phase correction)  = 0.995081
+      optimal phases / pi:
+          |0,0,A>     phi/pi = +0.3046
+          |0,0,B>     phi/pi = +0.3046
+          |0,1,A>     phi/pi = -0.6643
+          |0,1,B>     phi/pi = -0.6643
+          |1,0,A>     phi/pi = -0.6643
+          |1,0,B>     phi/pi = -0.6643
+          |1,1,A>     phi/pi = +0.6215
+          |1,1,B>     phi/pi = +0.6215
+
+CCX drive params (rev. 4 amplitudes, same lattice):
+  Omega_cc / (2 pi) = 50.0 MHz  -> T_cc = 10.00 ns
+  Omega_t  / (2 pi) = 20.0 MHz  -> T_t  = 25.00 ns
+  T_tot_CCX = 2 T_cc + 3 T_t = 95.00 ns
+
+==============================================================================
+  CCX gate  (rev. 4 amplitudes, a = 4 um lattice)
+==============================================================================
+Total gate time:  T_tot = 95.000 ns
+
+  [a] 8 per-input basis fidelities  (mesolve, with decoherence)
+      F( |0,0,A>    -> |0,0,A>    ) = 0.994033
+      F( |0,0,B>    -> |0,0,B>    ) = 0.993899
+      F( |0,1,A>    -> |0,1,A>    ) = 0.999326
+      F( |0,1,B>    -> |0,1,B>    ) = 0.999146
+      F( |1,0,A>    -> |1,0,A>    ) = 0.999326
+      F( |1,0,B>    -> |1,0,B>    ) = 0.999146
+      F( |1,1,A>    -> |1,1,B>    ) = 0.999867
+      F( |1,1,B>    -> |1,1,A>    ) = 0.999867
+      F_bar_basis  (1/d) sum_k F_k         = 0.998076
+
+  [b] Pedersen Choi tensor  (64 mesolve runs, with decoherence)
+      Choi tensor built in 6.1 s
+      Survival T_P                          = 0.998354
+      F_pro  (process fidelity, raw)        = 0.675429
+      F_bar  (Pedersen Haar-averaged, raw)  = 0.711493
+
+  [c] Noiseless unitary Pedersen  (decoherence OFF)
+      noiseless propagator in 0.3 s
+      F_pro_u   = |Tr(U0^dag U_eff)|^2 / 64 = 0.675803
+      F_bar_u   (Pedersen, no decoherence)  = 0.711825
+      branch | mag.   | phi/pi   | label
+             | 0.9976 | +0.4643  | |0,0,A>
+             | 0.9975 | +0.4700  | |0,0,B>
+             | 1.0000 | +0.0112  | |0,1,A>
+             | 0.9999 | +0.0225  | |0,1,B>
+             | 1.0000 | +0.0112  | |1,0,A>
+             | 0.9999 | +0.0225  | |1,0,B>
+             | 1.0000 | +0.0000  | |1,1,A>
+             | 1.0000 | +0.0000  | |1,1,B>
+
+  [d] Phase-corrected Pedersen  (optimal diagonal D absorbed)
+      optimization in 0.04 s
+      F_pro_pc   (process, virtual-Z-absorbed)  = 0.998068
+      F_bar_pc   (Pedersen + phase correction)  = 0.998282
+      optimal phases / pi:
+          |0,0,A>     phi/pi = +0.6752
+          |0,0,B>     phi/pi = +0.6808
+          |0,1,A>     phi/pi = +0.2221
+          |0,1,B>     phi/pi = +0.2334
+          |1,0,A>     phi/pi = +0.2221
+          |1,0,B>     phi/pi = +0.2334
+          |1,1,A>     phi/pi = +0.2109
+          |1,1,B>     phi/pi = +0.2109
+
+==============================================================================
+Wrote: /Users/wanda/QSTC_PROJECT/TriQG/examples/Smaller_VDD_energy/a4_K1_full_fidelity_analysis.json
+==============================================================================
+
+Summary  (a = 4.0 um, K = 1, ARC lifetimes; all values dimensionless):
+==============================================================================
+  Metric                                            OR gate       CCX gate
+------------------------------------------------------------------------------
+  F_bar_basis (1/d) sum F_k                        0.994958       0.998076
+  F_bar_Pedersen (raw)                             0.144965       0.711493
+  F_bar_Pedersen_phase_corrected                   0.995081       0.998282
+  F_bar_unitary (no decoherence)                   0.145123       0.711825
+  Computational survival T_P                       0.998689       0.998354
+  T_tot (ns)                                        243.964         95.000
+==============================================================================

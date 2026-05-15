@@ -7,3 +7,5 @@ build/
 *.egg
 .venv/
 .env
+.pi/
+

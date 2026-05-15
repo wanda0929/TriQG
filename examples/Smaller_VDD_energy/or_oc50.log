@@ -1,0 +1,53 @@
+Effective two-photon pulse area: 0.785398 (target: pi/4 = 0.785398)
+
+OR Gate Average Gate Fidelity -- Smaller_V_DD redesign  (Gaussian pulse)
+Energy levels: Rb 54 D_3/2 + Cs 62 D_5/2,  a = 5.00 um
+==================================================================
+n_controls = 2,  basis states = 8
+Pulse amplitudes:
+  Omega_c / (2 pi) = 50 MHz   -> T_c = 10.0000 ns
+  Omega_p / (2 pi) = 20.0 MHz   -> T_f = 1013.9510 ns (super-Gaussian)
+  Omega_R / Omega_p = 3.50
+  sigma = 0.432420 us  (alpha = T_f^3/sigma = 2.4107)
+  delta / (2 pi) = 500.0 MHz
+Interactions:
+  V_ct / (2 pi) = +226.274 MHz   (Rb-Cs Foerster, |54D3/2;62D5/2>)
+  V_cc / (2 pi) =  -0.7280 MHz   (Cs-Cs vdW at r_AA = 7.071 um)
+  V_DD / (2 pi) =  +0.5805 MHz   (Rb-Rb vdW at r_DD = 5.000 um) [info only]
+  Foerster defect Delta_F / (2 pi) = -5.20 MHz
+  R_DD = 389.8,  R_AA = 310.8   (both >= 100 OK)
+Decoherence (re-verify with ARC):
+  tau_r (Cs 62 D_5/2) = 77.00 us
+  tau_R (Rb 54 D_3/2) = 74.00 us
+  tau_P (Rb  7 P_3/2) = 0.131 us
+Total gate time = 2.0479 us  (2047.90 ns)
+
+  [1/8] Simulating input |0,0,A> ... /Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+F = 0.997068
+  [2/8] Simulating input |0,0,B> ... F = 0.997068
+  [3/8] Simulating input |0,1,A> ... F = 0.971759
+  [4/8] Simulating input |0,1,B> ... F = 0.971759
+  [5/8] Simulating input |1,0,A> ... F = 0.971759
+  [6/8] Simulating input |1,0,B> ... F = 0.971759
+  [7/8] Simulating input |1,1,A> ... F = 0.946533
+  [8/8] Simulating input |1,1,B> ... F = 0.946533
+
+============================================================
+Omega_c = 2 pi * 50 MHz
+Average gate fidelity:  F_bar = 0.971780
+Gate infidelity:        1 - F_bar = 2.822e-02
+============================================================
+
+Diagnostic: final-state populations on each Rb target level
+----------------------------------------------------------------------
+  Input             P(A)      P(B)      P(P)      P(R)
+----------------------------------------------------------------------
+  |0,0,A>        0.99707   0.00115   0.00001   0.00178
+  |0,0,B>        0.00115   0.99707   0.00001   0.00178
+  |0,1,A>        0.00214   0.97176   0.00000   0.00057
+  |0,1,B>        0.97176   0.00214   0.00000   0.00057
+  |1,0,A>        0.00214   0.97176   0.00000   0.00057
+  |1,0,B>        0.97176   0.00214   0.00000   0.00057
+  |1,1,A>        0.00187   0.94653   0.00000   0.00001
+  |1,1,B>        0.94653   0.00187   0.00000   0.00001

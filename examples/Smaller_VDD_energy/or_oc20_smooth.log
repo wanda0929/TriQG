@@ -1,0 +1,53 @@
+Effective two-photon pulse area: 0.785398 (target: pi/4 = 0.785398)
+
+OR Gate Average Gate Fidelity -- Smaller_V_DD redesign  (Gaussian pulse)
+Energy levels: Rb 54 D_3/2 + Cs 62 D_5/2,  a = 5.00 um
+==================================================================
+n_controls = 2,  basis states = 8
+Pulse amplitudes:
+  Omega_c / (2 pi) = 20 MHz   -> T_c = 25.0000 ns
+  Omega_p / (2 pi) = 20.0 MHz   -> T_f = 1200.3888 ns (super-Gaussian)
+  Omega_R / Omega_p = 3.50
+  sigma = 0.432420 us  (alpha = T_f^3/sigma = 4.0000, edge/peak = 1.13e-07)
+  delta / (2 pi) = 500.0 MHz
+Interactions:
+  V_ct / (2 pi) = +226.274 MHz   (Rb-Cs Foerster, |54D3/2;62D5/2>)
+  V_cc / (2 pi) =  -0.7280 MHz   (Cs-Cs vdW at r_AA = 7.071 um)
+  V_DD / (2 pi) =  +0.5805 MHz   (Rb-Rb vdW at r_DD = 5.000 um) [info only]
+  Foerster defect Delta_F / (2 pi) = -5.20 MHz
+  R_DD = 389.8,  R_AA = 310.8   (both >= 100 OK)
+Decoherence (re-verify with ARC):
+  tau_r (Cs 62 D_5/2) = 77.00 us
+  tau_R (Rb 54 D_3/2) = 74.00 us
+  tau_P (Rb  7 P_3/2) = 0.131 us
+Total gate time = 2.4508 us  (2450.78 ns)
+
+  [1/8] Simulating input |0,0,A> ... /Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+F = 0.997067
+  [2/8] Simulating input |0,0,B> ... F = 0.997067
+  [3/8] Simulating input |0,1,A> ... F = 0.966899
+  [4/8] Simulating input |0,1,B> ... F = 0.966899
+  [5/8] Simulating input |1,0,A> ... F = 0.966899
+  [6/8] Simulating input |1,0,B> ... F = 0.966899
+  [7/8] Simulating input |1,1,A> ... F = 0.935538
+  [8/8] Simulating input |1,1,B> ... F = 0.935538
+
+============================================================
+Omega_c = 2 pi * 20 MHz
+Average gate fidelity:  F_bar = 0.966601
+Gate infidelity:        1 - F_bar = 3.340e-02
+============================================================
+
+Diagnostic: final-state populations on each Rb target level
+----------------------------------------------------------------------
+  Input             P(A)      P(B)      P(P)      P(R)
+----------------------------------------------------------------------
+  |0,0,A>        0.99707   0.00116   0.00001   0.00177
+  |0,0,B>        0.00116   0.99707   0.00001   0.00177
+  |0,1,A>        0.00213   0.96690   0.00000   0.00058
+  |0,1,B>        0.96690   0.00213   0.00000   0.00058
+  |1,0,A>        0.00213   0.96690   0.00000   0.00058
+  |1,0,B>        0.96690   0.00213   0.00000   0.00058
+  |1,1,A>        0.00186   0.93554   0.00000   0.00001
+  |1,1,B>        0.93554   0.00186   0.00000   0.00001

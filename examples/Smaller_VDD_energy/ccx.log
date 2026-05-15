@@ -1,0 +1,50 @@
+CCX Average Gate Fidelity -- Smaller_V_DD redesign
+Energy levels: Rb 54 D_3/2 + Cs 62 D_5/2,  a = 5.00 um
+==================================================================
+n_controls = 2,  basis states = 8
+Pulse amplitudes:
+  Omega_cc / (2 pi) = 50.0 MHz  -> T_cc = 10.0000 ns
+  Omega_t  / (2 pi) = 20.0 MHz  -> T_t  = 25.0000 ns
+Interactions:
+  V_ct / (2 pi) = +226.274 MHz   (Rb-Cs Foerster, |54D3/2;62D5/2>)
+  V_cc / (2 pi) =  -0.7280 MHz   (Cs-Cs vdW at r_AA = 7.071 um)
+  V_DD / (2 pi) =  +0.5805 MHz   (Rb-Rb vdW at r_DD = 5.000 um) [info only]
+  Foerster defect Delta_F / (2 pi) = -5.20 MHz
+  R_DD = 389.8,  R_AA = 310.8   (both >= 100 OK)
+Ratios:
+  V_ct / Omega_t   = 11.314   (target >> 1 for blockade)
+  |V_cc| / Omega_cc = 0.0146   (target << 1 for clean controls)
+Decoherence (re-verify with ARC):
+  tau_r (Cs 62 D_5/2) = 77.00 us
+  tau_R (Rb 54 D_3/2) = 74.00 us
+  tau_P (Rb  7 P_3/2) = 0.131 us
+Total CCX time = 95.000 ns  (0.0950 us)
+
+  [1/8] Simulating input |0,0,A> ... /Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+F = 0.995929
+  [2/8] Simulating input |0,0,B> ... F = 0.996259
+  [3/8] Simulating input |0,1,A> ... F = 0.993376
+  [4/8] Simulating input |0,1,B> ... F = 0.994237
+  [5/8] Simulating input |1,0,A> ... F = 0.993376
+  [6/8] Simulating input |1,0,B> ... F = 0.994237
+  [7/8] Simulating input |1,1,A> ... F = 0.999708
+  [8/8] Simulating input |1,1,B> ... F = 0.999708
+
+============================================================
+Average gate fidelity:  F_bar = 0.995854
+Gate infidelity:        1 - F_bar = 4.146e-03
+============================================================
+
+Diagnostic: final-state populations on each Rb target level
+----------------------------------------------------------------------
+  Input             P(A)      P(B)      P(P)      P(R)
+----------------------------------------------------------------------
+  |0,0,A>        0.99593   0.00000   0.00000   0.00000
+  |0,0,B>        0.00000   0.99626   0.00000   0.00000
+  |0,1,A>        0.99338   0.00003   0.00000   0.00018
+  |0,1,B>        0.00003   0.99424   0.00000   0.00047
+  |1,0,A>        0.99338   0.00003   0.00000   0.00018
+  |1,0,B>        0.00003   0.99424   0.00000   0.00047
+  |1,1,A>        0.00015   0.99971   0.00000   0.00015
+  |1,1,B>        0.99971   0.00015   0.00000   0.00015

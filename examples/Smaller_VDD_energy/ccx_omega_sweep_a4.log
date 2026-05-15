@@ -1,0 +1,59 @@
+/Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+==============================================================================
+  CCX (Omega_cc, Omega_t) sweep  at  a = 4 um  with ARC lifetimes
+==============================================================================
+V_ct / (2 pi) = +441.942 MHz
+V_cc / (2 pi) =  -2.7771 MHz
+Lifetimes (ARC):  tau_R = 83.41 us,  tau_r = 83.90 us,  tau_P = 0.131 us
+
+Grid:  Omega_cc in [30.0, 50.0, 70.0, 100.0]  MHz
+       Omega_t  in [20.0, 30.0, 40.0, 50.0]  MHz
+
+ Omega_cc   Omega_t   V_ct/Ot   T_tot ns    F_bar_basis
+------------------------------------------------------------------------------
+     30.0      20.0     22.10     108.33       0.995567   (0.7 s)
+     30.0      30.0     14.73      83.33       0.991996   (0.5 s)
+     30.0      40.0     11.05      70.83       0.985569   (0.4 s)
+     30.0      50.0      8.84      63.33       0.981139   (0.4 s)
+     50.0      20.0     22.10      95.00       0.997650   (0.6 s)
+     50.0      30.0     14.73      70.00       0.994628   (0.5 s)
+     50.0      40.0     11.05      57.50       0.988431   (0.4 s)
+     50.0      50.0      8.84      50.00       0.984103   (0.3 s)
+     70.0      20.0     22.10      89.29       0.998253   (0.6 s)
+     70.0      30.0     14.73      64.29       0.995380   (0.4 s)
+     70.0      40.0     11.05      51.79       0.989245   (0.4 s)
+     70.0      50.0      8.84      44.29       0.984943   (0.3 s)
+    100.0      20.0     22.10      85.00       0.998584   (0.6 s)
+    100.0      30.0     14.73      60.00       0.995790   (0.4 s)
+    100.0      40.0     11.05      47.50       0.989687   (0.3 s)
+    100.0      50.0      8.84      40.00       0.985399   (0.3 s)
+
+Wrote /Users/wanda/QSTC_PROJECT/TriQG/examples/Smaller_VDD_energy/ccx_omega_sweep_a4.csv
+
+Top 3 cells by F_bar_basis:
+  rank  Omega_cc   Omega_t   T_tot ns    F_bar_basis
+     1     100.0      20.0      85.00       0.998584
+     2      70.0      20.0      89.29       0.998253
+     3      50.0      20.0      95.00       0.997650
+
+==============================================================================
+Full Pedersen + phase-correction audit on top cell:
+==============================================================================
+  audit completed in 6.4 s
+
+  Omega_cc = 100.0 MHz, Omega_t = 20.0 MHz, T_tot = 85.00 ns
+
+  F_bar_basis (mean F_k)              = 0.998584
+  F_bar_Pedersen_raw                  = 0.733370
+  F_bar_Pedersen_phase_corrected      = 0.998731
+  F_bar_unitary  (no decoherence)     = 0.733930
+  Computational survival              = 0.999019
+
+Baseline comparison (Omega_cc=50, Omega_t=20 -- existing JSON):
+  Baseline F_bar_Pedersen_phase_corrected = 0.997897
+  Top-cell - baseline                     = +0.000834  (+0.834 x 10^-3)
+
+Wrote /Users/wanda/QSTC_PROJECT/TriQG/examples/Smaller_VDD_energy/ccx_omega_sweep_a4.json
+
+Total wall time: 13.6 s

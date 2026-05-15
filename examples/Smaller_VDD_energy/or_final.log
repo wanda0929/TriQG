@@ -1,0 +1,52 @@
+Effective two-photon pulse area: 0.746144  (target: K * pi/4 = 0.746128,  K = 0.95)
+
+OR Gate Average Gate Fidelity -- Smaller_V_DD redesign  (Gaussian pulse)
+Energy levels: Rb 54 D_3/2 + Cs 62 D_5/2,  a = 5.00 um
+==================================================================
+n_controls = 2,  basis states = 8
+Pulse amplitudes:
+  Omega_c / (2 pi) = 50.0 MHz   -> T_c = 10.0000 ns
+  Omega_p / (2 pi) = 50.0 MHz   -> T_f = 182.4628 ns (super-Gaussian)
+  Omega_R / (2 pi) = 175.0 MHz   (ratio = 3.50)
+  sigma = 1.5187 ns  (alpha = T_f^3/sigma = 4.0000, edge/peak = 1.13e-07)
+  delta / (2 pi) = 500.0 MHz
+  area = K * pi/4 with K = 0.95
+Interactions:
+  V_ct / (2 pi) = +226.274 MHz   (Rb-Cs Foerster, |54D3/2;62D5/2>)
+  V_cc / (2 pi) =  -0.7280 MHz   (Cs-Cs vdW at r_AA = 7.071 um)
+  V_DD / (2 pi) =  +0.5805 MHz   (Rb-Rb vdW at r_DD = 5.000 um) [info only]
+  Foerster defect Delta_F / (2 pi) = -5.20 MHz
+  R_DD = 389.8,  R_AA = 310.8   (both >= 100 OK)
+Decoherence (re-verify with ARC):
+  tau_r (Cs 62 D_5/2) = 77.00 us
+  tau_R (Rb 54 D_3/2) = 74.00 us
+  tau_P (Rb  7 P_3/2) = 0.131 us
+Total gate time = 0.3849 us  (384.93 ns)
+
+F = 0.997232
+  [2/8] Simulating input |0,0,B> ... F = 0.997232
+  [3/8] Simulating input |0,1,A> ... F = 0.992704
+  [4/8] Simulating input |0,1,B> ... F = 0.992704
+  [5/8] Simulating input |1,0,A> ... F = 0.992704
+  [6/8] Simulating input |1,0,B> ... F = 0.992704
+  [7/8] Simulating input |1,1,A> ... F = 0.987049
+  [8/8] Simulating input |1,1,B> ... F = 0.987049
+
+============================================================
+Omega_c = 2 pi * 50.0 MHz,  Delta = 2 pi * 500.0 MHz,  area = 0.95 * pi/4
+Average gate fidelity:  F_bar = 0.992422
+Gate infidelity:        1 - F_bar = 7.578e-03
+============================================================
+
+Diagnostic: final-state populations on each Rb target level
+----------------------------------------------------------------------
+  Input             P(A)      P(B)      P(P)      P(R)
+----------------------------------------------------------------------
+  |0,0,A>        0.99723   0.00091   0.00007   0.00179
+  |0,0,B>        0.00091   0.99723   0.00007   0.00179
+  |0,1,A>        0.00245   0.99270   0.00000   0.00010
+  |0,1,B>        0.99270   0.00245   0.00000   0.00010
+  |1,0,A>        0.00245   0.99270   0.00000   0.00010
+  |1,0,B>        0.99270   0.00245   0.00000   0.00010
+  |1,1,A>        0.00302   0.98705   0.00000   0.00000
+  |1,1,B>        0.98705   0.00302   0.00000   0.00000

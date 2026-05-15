@@ -1,0 +1,31 @@
+========================================================================
+ARC lifetime re-verification (T = 300 K, BBR included)
+========================================================================
+ARC version: 3.10.2
+
+Rb 54 D_{3/2}:
+    tau (0   K, radiative only) =  164.55 us
+    tau (300 K, rad + BBR)      =   83.41 us
+    n^3-scaled estimate used     =   74    us
+    ARC / estimate ratio         = 1.127x
+
+Cs 62 D_{5/2}:
+    tau (0   K, radiative only) =  138.87 us
+    tau (300 K, rad + BBR)      =   83.90 us
+    n^3-scaled estimate used     =   77    us
+    ARC / estimate ratio         = 1.090x
+
+Rb 7 P_{3/2} (intermediate, low n):
+    tau (0   K) =  0.2703 us
+    tau (300 K) =  0.2693 us
+    paper value =  0.1310 us
+
+------------------------------------------------------------------------
+Anchor cross-check (Option A levels, paper's n^3 reference):
+------------------------------------------------------------------------
+Rb 66 D_5/2 @ 300K: 134.87 us   (paper says 134.87 us)
+Cs 76 D_3/2 @ 300K: 142.73 us   (paper says 142.73 us)
+
+========================================================================
+Verdict (see report):
+========================================================================
