@@ -1,0 +1,99 @@
+/Users/wanda/QSTC_PROJECT/TriQG/.venv/lib/python3.12/site-packages/qutip/core/data/expm.py:146: LinAlgWarning: Matrix is singular. The result might be inaccurate or the array might not have a square root.
+  return Dense(scipy.linalg.sqrtm(matrix.as_ndarray()))
+==============================================================================
+  Error budget at a = 4.0 um, K = 1  (OR + CCX gates)
+==============================================================================
+V_ct / (2 pi) = +441.942 MHz
+V_DD / (2 pi) =  +2.2144 MHz   (would-be Rb-Rb; not in 3-atom box)
+V_cc / (2 pi) =  -2.7771 MHz   (Cs-Cs ancilla-ancilla, enters H)
+gamma_P = 3.704 / us   (tau_P = 0.270 us, Rb 7P_3/2)
+gamma_R = 0.00608 / us   (tau_R = 164.55 us, Rb 54D_3/2)
+gamma_r = 0.00720 / us   (tau_r = 138.87 us, Cs 62D_5/2)
+
+==============================================================================
+  OR gate (K = 1, a = 4 um champion)
+==============================================================================
+T_tot = 243.96 ns
+
+  running scenario  baseline                (gP=3.704, gR=0.0061, gr=0.0072, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.994958, 1-F = 5.042e-03, (1.5 s)
+  running scenario  no_P_decay              (gP=0.000, gR=0.0061, gr=0.0072, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.995716, 1-F = 4.284e-03, (1.4 s)
+  running scenario  no_Rydberg_decay        (gP=3.704, gR=0.0000, gr=0.0000, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.996649, 1-F = 3.351e-03, (1.5 s)
+  running scenario  no_same_species         (gP=3.704, gR=0.0061, gr=0.0072, Vcc/2pi= +0.000 MHz)
+    F_bar = 0.995291, 1-F = 4.709e-03, (1.8 s)
+  running scenario  clean                   (gP=0.000, gR=0.0000, gr=0.0000, Vcc/2pi= +0.000 MHz)
+    F_bar = 0.997744, 1-F = 2.256e-03, (1.4 s)
+
+==============================================================================
+  CCX gate (rev. 4 amplitudes, a = 4 um lattice)
+==============================================================================
+T_tot = 95.00 ns
+
+  running scenario  baseline                (gP=3.704, gR=0.0061, gr=0.0072, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.998076, 1-F = 1.924e-03, (1.2 s)
+  running scenario  no_P_decay              (gP=0.000, gR=0.0061, gr=0.0072, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.998076, 1-F = 1.924e-03, (1.2 s)
+  running scenario  no_Rydberg_decay        (gP=3.704, gR=0.0000, gr=0.0000, Vcc/2pi= -2.777 MHz)
+    F_bar = 0.998711, 1-F = 1.289e-03, (1.1 s)
+  running scenario  no_same_species         (gP=3.704, gR=0.0061, gr=0.0072, Vcc/2pi= +0.000 MHz)
+    F_bar = 0.999260, 1-F = 7.397e-04, (1.2 s)
+  running scenario  clean                   (gP=0.000, gR=0.0000, gr=0.0000, Vcc/2pi= +0.000 MHz)
+    F_bar = 0.999896, 1-F = 1.037e-04, (1.2 s)
+
+==============================================================================
+  ERROR BUDGET  (OR gate)
+==============================================================================
+  Baseline infidelity                       1 - F = 5.0424e-03
+  Coherent floor (clean run)                1 - F = 2.2559e-03
+  Total decoherence + V_cc contribution     2.7865e-03
+
+  Scenario                   F_bar         1-F     delta_F     share
+  ---------------------- --------- ----------- ----------- ---------
+  baseline                0.994958   5.042e-03  +0.000e+00         -
+  no_P_decay              0.995716   4.284e-03  +7.581e-04    27.21%
+  no_Rydberg_decay        0.996649   3.351e-03  +1.691e-03    60.69%
+  no_same_species         0.995291   4.709e-03  +3.335e-04    11.97%
+  clean                   0.997744   2.256e-03  +2.786e-03   100.00%
+
+  Linearity check:
+    sum of single-channel gains  = 2.7827e-03
+    clean - baseline             = 2.7865e-03
+    cross-term (clean-sum)       = +3.7813e-06   (+0.14% of total)
+
+  Dominant error channel  -->  Rydberg_decay  (removes delta_F = 1.691e-03)
+  Ranking (largest -> smallest):
+    Rydberg_decay   delta_F = +1.691e-03   share = 60.69%
+    P_decay         delta_F = +7.581e-04   share = 27.21%
+    same_species    delta_F = +3.335e-04   share = 11.97%
+
+==============================================================================
+  ERROR BUDGET  (CCX gate)
+==============================================================================
+  Baseline infidelity                       1 - F = 1.9237e-03
+  Coherent floor (clean run)                1 - F = 1.0369e-04
+  Total decoherence + V_cc contribution     1.8200e-03
+
+  Scenario                   F_bar         1-F     delta_F     share
+  ---------------------- --------- ----------- ----------- ---------
+  baseline                0.998076   1.924e-03  +0.000e+00         -
+  no_P_decay              0.998076   1.924e-03  +0.000e+00     0.00%
+  no_Rydberg_decay        0.998711   1.289e-03  +6.351e-04    34.90%
+  no_same_species         0.999260   7.397e-04  +1.184e-03    65.05%
+  clean                   0.999896   1.037e-04  +1.820e-03   100.00%
+
+  Linearity check:
+    sum of single-channel gains  = 1.8191e-03
+    clean - baseline             = 1.8200e-03
+    cross-term (clean-sum)       = +9.0516e-07   (+0.05% of total)
+
+  Dominant error channel  -->  same_species  (removes delta_F = 1.184e-03)
+  Ranking (largest -> smallest):
+    same_species    delta_F = +1.184e-03   share = 65.05%
+    Rydberg_decay   delta_F = +6.351e-04   share = 34.90%
+    P_decay         delta_F = +0.000e+00   share =  0.00%
+
+==============================================================================
+Wrote: /Users/wanda/QSTC_PROJECT/TriQG/examples/Smaller_VDD_energy/a4_K1_error_budget.json
+==============================================================================
